@@ -1,7 +1,14 @@
 import React from "react";
+import { useState } from "react";
 import PopUser from "../popups/PopUser/PopUser";
 
 export default function Header() {
+  const [isUserPopupOpen, setIsUserPopupOpen] = useState(false);
+
+  const toggleUserPopup = () => {
+    setIsUserPopupOpen(!isUserPopupOpen);
+  };
+
   return (
     <header className="header">
       <div className="container">
@@ -20,13 +27,20 @@ export default function Header() {
             <button className="header__btn-main-new _hover01" id="btnMainNew">
               <a href="#popNewCard">Создать новую задачу</a>
             </button>
-            <a href="#user-set-target" className="header__user _hover02">
-              Ivan Ivanov
+            <a
+              href="#user-set-target"
+              className="header__user _hover02"
+              onClick={(e) => {
+                e.preventDefault();
+                toggleUserPopup();
+              }}
+            >
+              Olga Petrova
             </a>
+            {isUserPopupOpen && <PopUser onClose={toggleUserPopup} />}
           </nav>
         </div>
       </div>
-      <PopUser />
     </header>
   );
 }

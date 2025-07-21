@@ -1,14 +1,16 @@
 import React from "react";
 
-export default function Card() {
+export default function Card({ card }) {
+  const themeClass = `_${card.theme.toLowerCase().replace(" ", "-")}`;
+
   return (
     <div className="cards__item">
       <div className="cards__card card">
         <div className="card__group">
-          <div className="card__theme _orange">
-            <p className="_orange">Web Design</p>
+          <div className={`card__theme ${themeClass}`}>
+            <p className={themeClass}>{card.theme}</p>
           </div>
-          <a href="#popBrowse" target="_self">
+          <a href="#popBrowse" className="card-btn-link">
             <div className="card__btn">
               <div></div>
               <div></div>
@@ -17,9 +19,7 @@ export default function Card() {
           </a>
         </div>
         <div className="card__content">
-          <a href="" target="_blank">
-            <h3 className="card__title">Название задачи</h3>
-          </a>
+          <h3 className="card__title">{card.title}</h3>
           <div className="card__date">
             <svg
               xmlns="http://www.w3.org/2000/svg"
@@ -49,7 +49,7 @@ export default function Card() {
                 </clipPath>
               </defs>
             </svg>
-            <p>30.10.23</p>
+            <p>{card.date}</p>
           </div>
         </div>
       </div>
