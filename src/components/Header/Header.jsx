@@ -1,6 +1,14 @@
 import React from "react";
 import { useState } from "react";
 import PopUser from "../popups/PopUser/PopUser";
+import {
+  HeaderBlock,
+  HeaderContent,
+  HeaderLogo,
+  HeaderNav,
+  HeaderButton,
+  HeaderUser,
+} from "./Header.styled";
 
 export default function Header() {
   const [isUserPopupOpen, setIsUserPopupOpen] = useState(false);
@@ -10,37 +18,37 @@ export default function Header() {
   };
 
   return (
-    <header className="header">
+    <HeaderBlock>
       <div className="container">
-        <div className="header__block">
-          <div className="header__logo _show _light">
+        <HeaderContent>
+          <HeaderLogo className="_show _light">
             <a href="" target="_self">
               <img src="/assets/logo.png" alt="logo"></img>
             </a>
-          </div>
-          <div className="header__logo _dark">
+          </HeaderLogo>
+          <HeaderLogo className="_dark">
             <a href="" target="_self">
               <img src="/assets/logo_dark.png" alt="logo"></img>
             </a>
-          </div>
-          <nav className="header__nav">
-            <button className="header__btn-main-new _hover01" id="btnMainNew">
+          </HeaderLogo>
+          <HeaderNav>
+            <HeaderButton className="_hover01" id="btnMainNew">
               <a href="#popNewCard">Создать новую задачу</a>
-            </button>
-            <a
+            </HeaderButton>
+            <HeaderUser
               href="#user-set-target"
-              className="header__user _hover02"
+              className="_hover02"
               onClick={(e) => {
                 e.preventDefault();
                 toggleUserPopup();
               }}
             >
               Olga Petrova
-            </a>
+            </HeaderUser>
             {isUserPopupOpen && <PopUser onClose={toggleUserPopup} />}
-          </nav>
-        </div>
+          </HeaderNav>
+        </HeaderContent>
       </div>
-    </header>
+    </HeaderBlock>
   );
 }

@@ -1,26 +1,36 @@
 import React from "react";
+import {
+  CardItem,
+  CardWrapper,
+  CardGroup,
+  CardTheme,
+  CardButton,
+  CardTitle,
+  CardContent,
+  CardDate,
+} from "./Card.styled";
 
 export default function Card({ card }) {
-  const themeClass = `_${card.theme.toLowerCase().replace(" ", "-")}`;
+  const theme = card.theme.toLowerCase().replace(" ", "");
 
   return (
-    <div className="cards__item">
-      <div className="cards__card card">
-        <div className="card__group">
-          <div className={`card__theme ${themeClass}`}>
-            <p className={themeClass}>{card.theme}</p>
-          </div>
+    <CardItem>
+      <CardWrapper>
+        <CardGroup>
+          <CardTheme theme={theme}>
+            <p>{card.theme}</p>
+          </CardTheme>
           <a href="#popBrowse" className="card-btn-link">
-            <div className="card__btn">
+            <CardButton>
               <div></div>
               <div></div>
               <div></div>
-            </div>
+            </CardButton>
           </a>
-        </div>
-        <div className="card__content">
-          <h3 className="card__title">{card.title}</h3>
-          <div className="card__date">
+        </CardGroup>
+        <CardContent>
+          <CardTitle>{card.title}</CardTitle>
+          <CardDate>
             <svg
               xmlns="http://www.w3.org/2000/svg"
               width="13"
@@ -50,9 +60,9 @@ export default function Card({ card }) {
               </defs>
             </svg>
             <p>{card.date}</p>
-          </div>
-        </div>
-      </div>
-    </div>
+          </CardDate>
+        </CardContent>
+      </CardWrapper>
+    </CardItem>
   );
 }
