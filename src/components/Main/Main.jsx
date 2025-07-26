@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import Column from "../Column/Column";
-import { cardList } from "../../data.js";
+import { cardList, statusList } from "../../data.js";
+import { MainBlock, MainContent, LoadingText } from "./Main.styled";
 
 export default function Main() {
   const [isLoading, setIsLoading] = useState(true);
@@ -13,27 +14,23 @@ export default function Main() {
     return () => clearTimeout(timer);
   }, []);
 
-  const statusGroups = {
-    "Без статуса": cardList.filter((card) => card.status === "Без статуса"),
-    "Нужно сделать": cardList.filter((card) => card.status === "Нужно сделать"),
-    "В работе": cardList.filter((card) => card.status === "В работе"),
-    Тестирование: cardList.filter((card) => card.status === "Тестирование"),
-    Готово: cardList.filter((card) => card.status === "Готово"),
-  };
-
   return (
-    <main className="main">
+    <MainBlock>
       <div className="container">
-        <div className="main__block">
+        <MainContent>
           {isLoading ? (
-            <div className="loading-text">Данные загружаются...</div>
+            <LoadingText>Данные загружаются...</LoadingText>
           ) : (
-            Object.entries(statusGroups).map(([status, cards]) => (
-              <Column key={status} title={status} cards={cards} />
+            statusList.map((status) => (
+              <Column
+                key={status}
+                title={status}
+                cards={cardList.filter((card) => card.status === status)}
+              />
             ))
           )}
-        </div>
+        </MainContent>
       </div>
-    </main>
+    </MainBlock>
   );
 }
