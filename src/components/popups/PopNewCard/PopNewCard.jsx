@@ -28,7 +28,6 @@ function PopNewCard({ onClose }) {
 
   function handleCreate(e) {
     e.preventDefault();
-    // Здесь логика создания задачи
     console.log({ title, text, category });
     onClose();
   }

@@ -13,14 +13,12 @@ function AppRoutes({ isAuth, setIsAuth }) {
   return (
     <>
       <Routes>
-        {/* Защищённые роуты */}
         <Route element={<PrivateRoute isAuth={isAuth} />}>
           <Route path="/" element={<MainPage setIsAuth={setIsAuth} />} />
           <Route path="/card/:id" element={<CardPage />} />
           <Route path="/new-card" element={<NewCardPage />} />
           <Route path="/exit" element={<ExitPage setIsAuth={setIsAuth} />} />
         </Route>
-        {/* Публичные роуты */}
         <Route path="/login" element={<SignInPage setIsAuth={setIsAuth} />} />
         <Route
           path="/register"

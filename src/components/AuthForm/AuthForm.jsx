@@ -14,10 +14,8 @@ import {
 } from "./AuthForm.styled.js";
 import { GlobalStyles } from "../../styles/GlobalStyles.styled.js";
 
-// Исправленный mockAuthAPI
 const mockAuthAPI = {
   signIn: async (data) => {
-    // Берём имя из localStorage, если оно есть
     let name = "Пользователь";
     try {
       const userInfo = JSON.parse(localStorage.getItem("userInfo") || "{}");

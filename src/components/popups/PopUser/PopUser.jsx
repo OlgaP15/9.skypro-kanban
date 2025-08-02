@@ -16,7 +16,6 @@ function PopUser({ $isVisible, onClose, setIsAuth }) {
   const userName = userInfo?.name || "Пользователь";
   const userLogin = userInfo?.login || "Эл. почта";
 
-  // Обработчик клика вне окна
   useEffect(() => {
     if (!$isVisible) return;
     function handleClickOutside(event) {
@@ -50,7 +49,7 @@ function PopUser({ $isVisible, onClose, setIsAuth }) {
           setIsAuth={setIsAuth}
           onClose={() => {
             setIsExitOpen(false);
-            onClose && onClose(); // Закрыть и PopExit, и PopUser
+            onClose && onClose();
           }}
         />
       )}

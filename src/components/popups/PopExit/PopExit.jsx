@@ -19,7 +19,7 @@ function PopExit({ setIsAuth, onClose }) {
     localStorage.removeItem("isAuth");
     localStorage.removeItem("userInfo");
     localStorage.removeItem("token");
-    onClose(); // Закрыть PopExit и PopUser
+    onClose();
     setTimeout(() => {
       navigate("/login");
     }, 0);

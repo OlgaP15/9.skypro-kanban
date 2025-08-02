@@ -28,7 +28,6 @@ function PopBrowse({ task, onClose }) {
   };
   const handleSave = () => {
     alert("Функция сохранения пока не реализована");
-    // Здесь можно добавить логику сохранения, если потребуется
     if (onClose) onClose();
   };
 

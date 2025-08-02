@@ -1,4 +1,4 @@
-//Не найденная страница 404
+// страница 404
 import React from "react";
 import {
   NotFoundContainer,

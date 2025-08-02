@@ -1,4 +1,3 @@
-//Создание/добавление новой задачи
 import PopNewCard from "../components/popups/PopNewCard/PopNewCard";
 
 function NewCardPage() {
