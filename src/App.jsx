@@ -1,19 +1,22 @@
-import React from "react";
-import Header from "./components/Header/Header";
-import Main from "./components/Main/Main";
-import PopExit from "./components/popups/PopExit/PopExit";
-import PopNewCard from "./components/popups/PopNewCard/PopNewCard";
-import PopBrowse from "./components/popups/PopBrowse/PopBrowse";
+import React, { useState, useEffect } from "react";
 import { Wrapper } from "./styles/Wrapper.styled";
+import AppRoutes from "./components/AppRoutes";
 
 function App() {
+  // Восстанавливаем isAuth из localStorage при загрузке
+  const [isAuth, setIsAuth] = useState(() => {
+    return localStorage.getItem("isAuth") === "true";
+  });
+
+  // Сохраняем isAuth в localStorage при изменении
+  useEffect(() => {
+    localStorage.setItem("isAuth", isAuth);
+    console.log("isAuth", isAuth);
+  }, [isAuth]);
+
   return (
     <Wrapper>
-      <PopExit />
-      <PopNewCard />
-      <PopBrowse />
-      <Header />
-      <Main />
+      <AppRoutes isAuth={isAuth} setIsAuth={setIsAuth} />
     </Wrapper>
   );
 }

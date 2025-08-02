@@ -16,7 +16,7 @@ import {
   CalendarText,
 } from "./Calendar.styled";
 
-export default function Calendar() {
+function Calendar() {
   return (
     <CalendarContainer className="pop-new-card__calendar">
       <CalendarTitle className="subttl">Даты</CalendarTitle>
@@ -104,3 +104,4 @@ export default function Calendar() {
     </CalendarContainer>
   );
 }
+export default Calendar;

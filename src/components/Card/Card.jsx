@@ -1,4 +1,4 @@
-import React from "react";
+import { useNavigate, useLocation } from "react-router-dom";
 import {
   CardItem,
   CardWrapper,
@@ -10,8 +10,10 @@ import {
   CardDate,
 } from "./Card.styled";
 
-export default function Card({ card }) {
+function Card({ card }) {
   const theme = card.theme.toLowerCase().replace(" ", "");
+  const navigate = useNavigate();
+  const location = useLocation();
 
   return (
     <CardItem>
@@ -20,13 +22,15 @@ export default function Card({ card }) {
           <CardTheme theme={theme}>
             <p>{card.theme}</p>
           </CardTheme>
-          <a href="#popBrowse" className="card-btn-link">
-            <CardButton>
-              <div></div>
-              <div></div>
-              <div></div>
-            </CardButton>
-          </a>
+          <CardButton
+            onClick={() =>
+              navigate(`/card/${card.id}`, { state: { background: location } })
+            }
+          >
+            <div></div>
+            <div></div>
+            <div></div>
+          </CardButton>
         </CardGroup>
         <CardContent>
           <CardTitle>{card.title}</CardTitle>
@@ -66,3 +70,4 @@ export default function Card({ card }) {
     </CardItem>
   );
 }
+export default Card;

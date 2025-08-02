@@ -2,7 +2,7 @@ import React from "react";
 import Card from "../Card/Card";
 import { ColumnWrapper, ColumnTitle, CardsContainer } from "./Column.styled";
 
-export default function Column({ title, cards }) {
+function Column({ title, cards }) {
   return (
     <ColumnWrapper>
       <ColumnTitle>
@@ -16,3 +16,4 @@ export default function Column({ title, cards }) {
     </ColumnWrapper>
   );
 }
+export default Column;

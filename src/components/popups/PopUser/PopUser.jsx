@@ -1,33 +1,60 @@
-import React from "react";
+import React, { useEffect, useRef, useState } from "react";
+import {
+  PopUserContainer,
+  PopUserName,
+  PopUserMail,
+  PopUserTheme,
+  PopUserButton,
+} from "../PopUser/PopUser.styled";
+import PopExit from "../PopExit/PopExit";
 
-export default function popUser({ onClose }) {
+function PopUser({ $isVisible, onClose, setIsAuth }) {
+  const [isExitOpen, setIsExitOpen] = useState(false);
+  const ref = useRef();
+
+  const userInfo = JSON.parse(localStorage.getItem("userInfo") || "{}");
+  const userName = userInfo?.name || "Пользователь";
+  const userLogin = userInfo?.login || "Эл. почта";
+
+  // Обработчик клика вне окна
+  useEffect(() => {
+    if (!$isVisible) return;
+    function handleClickOutside(event) {
+      if (ref.current && !ref.current.contains(event.target)) {
+        onClose && onClose();
+      }
+    }
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, [$isVisible, onClose]);
+
+  if (!$isVisible) return null;
+
   return (
-    <div className="header__pop-user-set pop-user-set" id="user-set-target">
-      <a
-        href="#"
-        onClick={(e) => {
-          e.preventDefault();
-          onClose();
-        }}
-      >
-        x
-      </a>
-      <p className="pop-user-set__name">Olga Petrova</p>
-      <p className="pop-user-set__mail">olga.petrova@gmail.com</p>
-      <div className="pop-user-set__theme">
-        <p>Темная тема</p>
-        <input type="checkbox" className="checkbox" name="checkbox"></input>
-      </div>
-      <button
-        type="button"
-        className="_hover03"
-        onClick={(e) => {
-          e.preventDefault();
-          onClose();
-        }}
-      >
-        <a href="#popExit">Выйти</a>
-      </button>
-    </div>
+    <>
+      <PopUserContainer ref={ref} $isVisible={$isVisible} id="user-set-target">
+        <PopUserName>{userName}</PopUserName>
+        <PopUserMail>{userLogin}</PopUserMail>
+        <PopUserTheme>
+          <p>Темная тема</p>
+          <input type="checkbox" className="checkbox" name="checkbox" />
+        </PopUserTheme>
+        <PopUserButton type="button" onClick={() => setIsExitOpen(true)}>
+          Выйти
+        </PopUserButton>
+      </PopUserContainer>
+      {isExitOpen && (
+        <PopExit
+          setIsAuth={setIsAuth}
+          onClose={() => {
+            setIsExitOpen(false);
+            onClose && onClose(); // Закрыть и PopExit, и PopUser
+          }}
+        />
+      )}
+    </>
   );
 }
+export default PopUser;

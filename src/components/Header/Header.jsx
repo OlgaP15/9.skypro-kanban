@@ -1,5 +1,5 @@
-import React from "react";
-import { useState } from "react";
+import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import PopUser from "../popups/PopUser/PopUser";
 import {
   HeaderBlock,
@@ -10,12 +10,16 @@ import {
   HeaderUser,
 } from "./Header.styled";
 
-export default function Header() {
+function Header({ setIsAuth }) {
   const [isUserPopupOpen, setIsUserPopupOpen] = useState(false);
+  const navigate = useNavigate();
 
   const toggleUserPopup = () => {
-    setIsUserPopupOpen(!isUserPopupOpen);
+    setIsUserPopupOpen((prev) => !prev);
   };
+
+  const userName =
+    JSON.parse(localStorage.getItem("userInfo") || "{}").name || "Пользователь";
 
   return (
     <HeaderBlock>
@@ -32,8 +36,12 @@ export default function Header() {
             </a>
           </HeaderLogo>
           <HeaderNav>
-            <HeaderButton className="_hover01" id="btnMainNew">
-              <a href="#popNewCard">Создать новую задачу</a>
+            <HeaderButton
+              className="_hover01"
+              id="btnMainNew"
+              onClick={() => navigate("new-card")}
+            >
+              Создать новую задачу
             </HeaderButton>
             <HeaderUser
               href="#user-set-target"
@@ -43,12 +51,17 @@ export default function Header() {
                 toggleUserPopup();
               }}
             >
-              Olga Petrova
+              {userName}
             </HeaderUser>
-            {isUserPopupOpen && <PopUser onClose={toggleUserPopup} />}
+            <PopUser
+              $isVisible={isUserPopupOpen}
+              onClose={toggleUserPopup}
+              setIsAuth={setIsAuth}
+            />
           </HeaderNav>
         </HeaderContent>
       </div>
     </HeaderBlock>
   );
 }
+export default Header;
