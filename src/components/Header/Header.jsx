@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 import PopUser from "../popups/PopUser/PopUser";
 import {
   HeaderBlock,
@@ -26,14 +26,14 @@ function Header({ setIsAuth }) {
       <div className="container">
         <HeaderContent>
           <HeaderLogo className="_show _light">
-            <a href="" target="_self">
+            <Link to="/" target="_self">
               <img src="/assets/logo.png" alt="logo"></img>
-            </a>
+            </Link>
           </HeaderLogo>
           <HeaderLogo className="_dark">
-            <a href="" target="_self">
+            <Link to="/" target="_self">
               <img src="/assets/logo_dark.png" alt="logo"></img>
-            </a>
+            </Link>
           </HeaderLogo>
           <HeaderNav>
             <HeaderButton
