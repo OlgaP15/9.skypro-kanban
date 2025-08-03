@@ -1,4 +1,5 @@
-import React from "react";
+import { useNavigate } from "react-router-dom";
+import React, { useState } from "react";
 import Calendar from "../../Calendar/Calendar";
 import {
   PopNewCardStyled,
@@ -19,26 +20,36 @@ import {
   CategoriesTheme,
   Subtitle,
 } from "./PopNewCard.styled";
-import { useState } from "react";
 
 function PopNewCard({ onClose }) {
   const [category, setCategory] = useState("Web Design");
   const [title, setTitle] = useState("");
   const [text, setText] = useState("");
 
+  const navigate = useNavigate();
+
+  const handleClose = () => {
+    if (onClose) {
+      onClose();
+      setTimeout(() => {
+        if (window.location.pathname === "/new-card") {
+          navigate("/");
+        }
+      }, 0);
+    }
+  };
   function handleCreate(e) {
     e.preventDefault();
-    console.log({ title, text, category });
-    onClose();
+    handleClose();
   }
 
   return (
     <PopNewCardStyled id="popNewCard">
-      <PopNewCardContainer onClick={onClose}>
+      <PopNewCardContainer onClick={handleClose}>
         <PopNewCardBlock onClick={(e) => e.stopPropagation()}>
           <PopNewCardContent>
             <PopNewCardTitle>Создание задачи</PopNewCardTitle>
-            <PopNewCardClose onClick={onClose}>&#10006;</PopNewCardClose>
+            <PopNewCardClose onClick={handleClose}>&#10006;</PopNewCardClose>
             <PopNewCardWrap>
               <PopNewCardForm id="formNewCard" action="#">
                 <FormNewBlock>
