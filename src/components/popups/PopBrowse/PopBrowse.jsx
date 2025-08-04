@@ -149,7 +149,12 @@ function PopBrowse({ task, onClose }) {
                     Удалить задачу
                   </button>
                 </div>
-                <button onClick={onClose}>Закрыть</button>
+                <button
+                  className="btn-edit__edit _btn-bg _hover01"
+                  onClick={onClose}
+                >
+                  Закрыть
+                </button>
               </PopBrowseButtons>
             ) : (
               <PopBrowseButtons className="pop-browse__btn-edit">

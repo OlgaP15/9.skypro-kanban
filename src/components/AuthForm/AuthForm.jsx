@@ -1,3 +1,4 @@
+//Форма авторизации
 import { ErrorText } from "./AuthForm.styled";
 import { Link, useNavigate } from "react-router-dom";
 import { useState } from "react";

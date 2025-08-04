@@ -22,6 +22,11 @@ import {
 } from "./PopNewCard.styled";
 
 function PopNewCard({ onClose }) {
+  const handleCreate = () => {
+    alert("Функция создания пока не реализована");
+    if (onClose) onClose();
+  };
+
   const [category, setCategory] = useState("Web Design");
   const [title, setTitle] = useState("");
   const [text, setText] = useState("");
@@ -29,19 +34,14 @@ function PopNewCard({ onClose }) {
   const navigate = useNavigate();
 
   const handleClose = () => {
-    if (onClose) {
-      onClose();
-      setTimeout(() => {
-        if (window.location.pathname === "/new-card") {
-          navigate("/");
-        }
-      }, 0);
-    }
+    navigate("/");
   };
-  function handleCreate(e) {
-    e.preventDefault();
-    handleClose();
-  }
+
+  //function handleCreate(e) {
+  // посмотреть с наставником
+  //e.preventDefault();
+  //handleClose();
+  //}
 
   return (
     <PopNewCardStyled id="popNewCard">
@@ -76,7 +76,7 @@ function PopNewCard({ onClose }) {
               <Calendar />
             </PopNewCardWrap>
             <Categories>
-              <CategoriesP>Категория</CategoriesP>
+              <CategoriesP>Выберете категорию</CategoriesP>
               <CategoriesThemes>
                 <CategoriesTheme
                   className={`_web-design ${
@@ -107,7 +107,7 @@ function PopNewCard({ onClose }) {
             <FormNewCreate
               className="_hover01"
               id="btnCreate"
-              onClick={handleCreate}
+              onClick={handleCreate} // посмотреть
             >
               Создать задачу
             </FormNewCreate>
