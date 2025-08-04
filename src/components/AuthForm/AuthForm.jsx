@@ -26,14 +26,14 @@ const mockAuthAPI = {
     } catch (e) {}
     return {
       user: { name, login: data.login },
-      token: "",
+      token: "true",
     };
   },
 
   signUp: async (data) => {
     return {
       user: { name: data.name, login: data.login },
-      token: "",
+      token: "true",
     };
   },
 };

@@ -1,5 +1,4 @@
-import React from "react";
-import { useEffect, useState } from "react";
+import React, { useState } from "react";
 import { Routes, Route } from "react-router-dom";
 import MainPage from "../pages/MainPage";
 import CardPage from "../pages/CardPage";
@@ -12,20 +11,8 @@ import PrivateRoute from "./PrivateRoute";
 
 function AppRoutes() {
   const [isAuth, setIsAuth] = useState(() => {
-    try {
-      const token = localStorage.getItem("token");
-      return Boolean(token && token !== "undefined");
-    } catch (e) {
-      return false;
-    }
+    return Boolean(localStorage.getItem("token"));
   });
-  const [loading, setLoading] = useState(true);
-
-  useEffect(() => {
-    setTimeout(() => {
-      setLoading(false);
-    }, 2000);
-  }, []);
 
   return (
     <>

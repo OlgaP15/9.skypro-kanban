@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useRef, useState } from "react";
 import {
   PopUserContainer,
   PopUserName,
@@ -15,19 +15,6 @@ function PopUser({ $isVisible, onClose, setIsAuth }) {
   const userInfo = JSON.parse(localStorage.getItem("userInfo") || "{}");
   const userName = userInfo?.name || "Пользователь";
   const userLogin = userInfo?.login || "Эл. почта";
-
-  useEffect(() => {
-    if (!$isVisible) return;
-    function handleClickOutside(event) {
-      if (ref.current && !ref.current.contains(event.target)) {
-        onClose && onClose();
-      }
-    }
-    document.addEventListener("mousedown", handleClickOutside);
-    return () => {
-      document.removeEventListener("mousedown", handleClickOutside);
-    };
-  }, [$isVisible, onClose]);
 
   if (!$isVisible) return null;
 
