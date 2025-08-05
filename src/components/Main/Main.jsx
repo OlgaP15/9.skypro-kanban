@@ -3,13 +3,13 @@ import Column from "../Column/Column";
 import { cardList, statusList } from "../../data.js";
 import { MainBlock, MainContent, LoadingText } from "./Main.styled";
 
-export default function Main() {
+function Main() {
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
     const timer = setTimeout(() => {
       setIsLoading(false);
-    }, 3000);
+    }, 1500);
 
     return () => clearTimeout(timer);
   }, []);
@@ -34,3 +34,4 @@ export default function Main() {
     </MainBlock>
   );
 }
+export default Main;

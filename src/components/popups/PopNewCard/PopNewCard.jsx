@@ -1,70 +1,120 @@
-import React from "react";
+import { useNavigate } from "react-router-dom";
+import React, { useState } from "react";
 import Calendar from "../../Calendar/Calendar";
+import {
+  PopNewCardStyled,
+  PopNewCardContainer,
+  PopNewCardBlock,
+  PopNewCardContent,
+  PopNewCardTitle,
+  PopNewCardClose,
+  PopNewCardWrap,
+  PopNewCardForm,
+  FormNewBlock,
+  FormNewInput,
+  FormNewArea,
+  FormNewCreate,
+  Categories,
+  CategoriesP,
+  CategoriesThemes,
+  CategoriesTheme,
+  Subtitle,
+} from "./PopNewCard.styled";
 
-export default function popNewCard() {
+function PopNewCard({ onClose }) {
+  const handleCreate = () => {
+    alert("Функция создания пока не реализована");
+    if (onClose) onClose();
+  };
+
+  const [category, setCategory] = useState("Web Design");
+  const [title, setTitle] = useState("");
+  const [text, setText] = useState("");
+
+  const navigate = useNavigate();
+
+  const handleClose = () => {
+    navigate("/");
+  };
+
+  //function handleCreate(e) {
+  // посмотреть с наставником
+  //e.preventDefault();
+  //handleClose();
+  //}
+
   return (
-    <div className="pop-new-card" id="popNewCard">
-      <div className="pop-new-card__container">
-        <div className="pop-new-card__block">
-          <div className="pop-new-card__content">
-            <h3 className="pop-new-card__ttl">Создание задачи</h3>
-            <a href="#" className="pop-new-card__close">
-              &#10006;
-            </a>
-            <div className="pop-new-card__wrap">
-              <form
-                className="pop-new-card__form form-new"
-                id="formNewCard"
-                action="#"
-              >
-                <div className="form-new__block">
-                  <label htmlFor="formTitle" className="subttl">
-                    Название задачи
-                  </label>
-                  <input
-                    className="form-new__input"
+    <PopNewCardStyled id="popNewCard">
+      <PopNewCardContainer onClick={handleClose}>
+        <PopNewCardBlock onClick={(e) => e.stopPropagation()}>
+          <PopNewCardContent>
+            <PopNewCardTitle>Создание задачи</PopNewCardTitle>
+            <PopNewCardClose onClick={handleClose}>&#10006;</PopNewCardClose>
+            <PopNewCardWrap>
+              <PopNewCardForm id="formNewCard" action="#">
+                <FormNewBlock>
+                  <Subtitle htmlFor="formTitle">Название задачи</Subtitle>
+                  <FormNewInput
                     type="text"
                     name="name"
                     id="formTitle"
                     placeholder="Введите название задачи..."
                     autoFocus
-                    autoComplete="off"
-                  ></input>
-                </div>
-                <div className="form-new__block">
-                  <label htmlFor="textArea" className="subttl">
-                    Описание задачи
-                  </label>
-                  <textarea
-                    className="form-new__area"
+                    onChange={(e) => setTitle(e.target.value)}
+                  />
+                </FormNewBlock>
+                <FormNewBlock>
+                  <Subtitle htmlFor="textArea">Описание задачи</Subtitle>
+                  <FormNewArea
                     name="text"
                     id="textArea"
                     placeholder="Введите описание задачи..."
-                  ></textarea>
-                </div>
-              </form>
+                    onChange={(e) => setText(e.target.value)}
+                  />
+                </FormNewBlock>
+              </PopNewCardForm>
               <Calendar />
-            </div>
-            <div className="pop-new-card__categories categories">
-              <p className="categories__p subttl">Категория</p>
-              <div className="categories__themes">
-                <div className="categories__theme _web-design _active-category">
+            </PopNewCardWrap>
+            <Categories>
+              <CategoriesP>Выберете категорию</CategoriesP>
+              <CategoriesThemes>
+                <CategoriesTheme
+                  className={`_web-design ${
+                    category === "Web Design" ? "_active-category" : ""
+                  }`}
+                  onClick={() => setCategory("Web Design")}
+                >
                   <p className="_web-design">Web Design</p>
-                </div>
-                <div className="categories__theme _research">
+                </CategoriesTheme>
+                <CategoriesTheme
+                  className={`_research ${
+                    category === "Research" ? "_active-category" : ""
+                  }`}
+                  onClick={() => setCategory("Research")}
+                >
                   <p className="_research">Research</p>
-                </div>
-                <div className="categories__theme _copywriting">
+                </CategoriesTheme>
+                <CategoriesTheme
+                  className={`_copywriting ${
+                    category === "Copywriting" ? "_active-category" : ""
+                  }`}
+                  onClick={() => setCategory("Copywriting")}
+                >
                   <p className="_copywriting">Copywriting</p>
-                </div>
-              </div>
-            </div>
-            <button className="form-new__create _hover01" id="btnCreate">
+                </CategoriesTheme>
+              </CategoriesThemes>
+            </Categories>
+            <FormNewCreate
+              className="_hover01"
+              id="btnCreate"
+              onClick={handleCreate} // посмотреть
+            >
               Создать задачу
-            </button>
-          </div>
-        </div>
-      </div>
-    </div>
+            </FormNewCreate>
+          </PopNewCardContent>
+        </PopNewCardBlock>
+      </PopNewCardContainer>
+    </PopNewCardStyled>
   );
 }
+export default PopNewCard;
