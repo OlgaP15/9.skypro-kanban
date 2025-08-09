@@ -14,31 +14,32 @@ import {
   FormGroup,
 } from "./AuthForm.styled.js";
 import { GlobalStyles } from "../../styles/GlobalStyles.styled.js";
+import { signIn, signUp } from "../../services/api.js";
 
-const mockAuthAPI = {
-  signIn: async (data) => {
-    let name = "Пользователь";
-    try {
-      const userInfo = JSON.parse(localStorage.getItem("userInfo") || "{}");
-      if (userInfo && userInfo.name) {
-        name = userInfo.name;
-      }
-    } catch (e) {}
-    return {
-      user: { name, login: data.login },
-      token: "true",
-    };
-  },
+//const BASE_URL = {
+//  signIn: async (data) => {
+//    let name = "Пользователь";
+//    try {
+//      const userInfo = JSON.parse(localStorage.getItem("userInfo") || "{}");
+//      if (userInfo && userInfo.name) {
+//        name = userInfo.name;
+//      }
+//    } catch (e) {}
+//    return {
+//      user: { name, login: data.login },
+//     token: "true",
+//    };
+//  },
 
-  signUp: async (data) => {
-    return {
-      user: { name: data.name, login: data.login },
-      token: "true",
-    };
-  },
-};
+//  signUp: async (data) => {
+//    return {
+//     user: { name: data.name, login: data.login },
+//      token: "true",
+//    };
+//  },
+//};
 
-function AuthForm({ isSignUp, setIsAuth }) {
+function AuthForm({ isSignUp, userLogin, setIsAuth }) {
   const navigate = useNavigate();
 
   const [formData, setFormData] = useState({
@@ -57,21 +58,24 @@ function AuthForm({ isSignUp, setIsAuth }) {
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const validateForm = () => {
-    const newErrors = { name: false, login: false, password: false };
+    const newErrors = { name: "", login: "", password: "" };
     let isValid = true;
 
     if (isSignUp && !formData.name.trim()) {
       newErrors.name = true;
+      setError("Заполните все поля");
       isValid = false;
     }
 
     if (!formData.login.trim()) {
       newErrors.login = true;
+      setError("Заполните все поля");
       isValid = false;
     }
 
     if (!formData.password.trim()) {
       newErrors.password = true;
+      setError("Заполните все поля");
       isValid = false;
     }
 
@@ -97,18 +101,19 @@ function AuthForm({ isSignUp, setIsAuth }) {
 
     try {
       const response = isSignUp
-        ? await mockAuthAPI.signUp(formData)
-        : await mockAuthAPI.signIn(formData);
+        ? await signUp(formData)
+        : await signIn({ login: formData.login, password: formData.password });
 
-      if (response) {
-        setIsAuth(true);
+      if (response && response.user && response.token) {
+        userLogin(response.user);
         localStorage.setItem("isAuth", "true");
         localStorage.setItem("userInfo", JSON.stringify(response.user));
         localStorage.setItem("token", response.token);
+        setIsAuth(true);
         navigate("/");
       }
     } catch (error) {
-      setError(error.message || "Произошла ошибка");
+      setError(error.message || "Произошла ошибка при авторизации");
     } finally {
       setIsSubmitting(false);
     }
@@ -142,6 +147,7 @@ function AuthForm({ isSignUp, setIsAuth }) {
                   placeholder="Эл. почта"
                   value={formData.login}
                   onChange={handleChange}
+                  autoComplete="username"
                 />
                 <AuthInput
                   type="password"
