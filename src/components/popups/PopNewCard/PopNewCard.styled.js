@@ -28,6 +28,7 @@ export const PopNewCardContainer = styled.div`
   flex-direction: column;
   align-items: center;
   justify-content: center;
+  background: rgba(0, 0, 0, 0.2);
 
   @media (max-width: 660px) {
     padding: 0;

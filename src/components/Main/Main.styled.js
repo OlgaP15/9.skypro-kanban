@@ -2,7 +2,7 @@ import styled from "styled-components";
 
 export const MainBlock = styled.main`
   width: 100%;
-  background-color: #eaeef6;
+  background-color: #d9dce0ff;
   display: flex;
   justify-content: center;
 `;
@@ -13,6 +13,7 @@ export const MainContent = styled.div`
   margin: 0 auto;
   padding: 25px 0 49px;
   gap: 10px;
+  text-align: left;
 
   @media screen and (max-width: 1200px) {
     width: 100%;
