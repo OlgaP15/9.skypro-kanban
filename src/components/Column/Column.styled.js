@@ -11,7 +11,7 @@ export const ColumnWrapper = styled.div`
 `;
 
 export const ColumnTitle = styled.div`
-  padding: 0 10px;
+  padding: 0 5px;
   margin: 15px 0;
 
   p {
