@@ -15,7 +15,7 @@ export const HeaderContent = styled.div`
   position: relative;
   top: 0;
   left: 0;
-  padding: 0 135px;
+  padding: 0 128px;
 `;
 
 export const HeaderLogo = styled.div`

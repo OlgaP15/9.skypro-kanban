@@ -4,7 +4,7 @@ export const PopUserContainer = styled.div`
   display: ${({ $isVisible }) => ($isVisible ? "block" : "none")};
   position: absolute;
   top: 61px;
-  right: 176px;
+  right: 128px;
   width: 213px;
   height: 205px;
   border-radius: 10px;
