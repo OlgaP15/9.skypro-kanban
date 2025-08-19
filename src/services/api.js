@@ -17,9 +17,9 @@ export async function signIn({ login, password }) {
       }
     );
 
-    if (response.data.error) {
-      throw new Error(response.data.error);
-    }
+    //if (response.data.error) {
+    //  throw new Error(response.data.error);
+    //}
 
     return response.data;
   } catch (error) {

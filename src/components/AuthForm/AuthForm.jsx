@@ -18,7 +18,6 @@ import { signIn, signUp } from "../../services/api.js";
 function AuthForm({
   isSignUp,
   userLogin,
-  setIsAuth,
   error: propError,
   isLoading,
 }) {
@@ -94,7 +93,6 @@ function AuthForm({
           JSON.stringify(response.user || response)
         );
         userLogin(response.user || response);
-        setIsAuth(true);
         navigate("/");
       }
     } catch (error) {
