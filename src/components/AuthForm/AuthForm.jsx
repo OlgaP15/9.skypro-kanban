@@ -1,4 +1,3 @@
-//Форма авторизации
 import { ErrorText } from "./AuthForm.styled";
 import { Link, useNavigate } from "react-router-dom";
 import { useState } from "react";
@@ -14,33 +13,15 @@ import {
   FormGroup,
 } from "./AuthForm.styled.js";
 import { GlobalStyles } from "../../styles/GlobalStyles.styled.js";
+import { signIn, signUp } from "../../services/api.js";
 
-const mockAuthAPI = {
-  signIn: async (data) => {
-    let name = "Пользователь";
-    try {
-      const userInfo = JSON.parse(localStorage.getItem("userInfo") || "{}");
-      if (userInfo && userInfo.name) {
-        name = userInfo.name;
-      }
-    } catch (e) {}
-    return {
-      user: { name, login: data.login },
-      token: "true",
-    };
-  },
-
-  signUp: async (data) => {
-    return {
-      user: { name: data.name, login: data.login },
-      token: "true",
-    };
-  },
-};
-
-function AuthForm({ isSignUp, setIsAuth }) {
+function AuthForm({
+  isSignUp,
+  userLogin,
+  error: propError,
+  isLoading,
+}) {
   const navigate = useNavigate();
-
   const [formData, setFormData] = useState({
     name: "",
     login: "",
@@ -53,66 +34,84 @@ function AuthForm({ isSignUp, setIsAuth }) {
     password: false,
   });
 
-  const [error, setError] = useState("");
+  const [localError, setLocalError] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
 
+  // Объединяем ошибки из props и локальные
+  const error = propError || localError;
+
   const validateForm = () => {
-    const newErrors = { name: false, login: false, password: false };
-    let isValid = true;
-
-    if (isSignUp && !formData.name.trim()) {
-      newErrors.name = true;
-      isValid = false;
-    }
-
-    if (!formData.login.trim()) {
-      newErrors.login = true;
-      isValid = false;
-    }
-
-    if (!formData.password.trim()) {
-      newErrors.password = true;
-      isValid = false;
-    }
+    const newErrors = {
+      name: isSignUp && !formData.name.trim(),
+      login: !formData.login.trim(),
+      password: !formData.password.trim(),
+    };
 
     setErrors(newErrors);
-    return isValid;
+
+    if (newErrors.name || newErrors.login || newErrors.password) {
+      setLocalError("Заполните все обязательные поля");
+      return false;
+    }
+
+    return true;
   };
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setFormData({
-      ...formData,
+    setFormData((prev) => ({
+      ...prev,
       [name]: value,
-    });
-    setErrors({ ...errors, [name]: false });
-    setError("");
+    }));
+
+    // Сбрасываем ошибку при изменении поля
+    if (errors[name]) {
+      setErrors((prev) => ({ ...prev, [name]: false }));
+    }
+    if (error) setLocalError("");
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (!validateForm()) return;
+    if (isLoading || isSubmitting) return;
 
     setIsSubmitting(true);
+    setLocalError("");
 
     try {
-      const response = isSignUp
-        ? await mockAuthAPI.signUp(formData)
-        : await mockAuthAPI.signIn(formData);
+      const authFunction = isSignUp ? signUp : signIn;
+      const dataToSend = isSignUp
+        ? formData
+        : { login: formData.login, password: formData.password };
+
+      const response = await authFunction(dataToSend);
 
       if (response) {
-        setIsAuth(true);
-        localStorage.setItem("isAuth", "true");
-        localStorage.setItem("userInfo", JSON.stringify(response.user));
-        localStorage.setItem("token", response.token);
+        localStorage.setItem(
+          "userInfo",
+          JSON.stringify(response.user || response)
+        );
+        userLogin(response.user || response);
         navigate("/");
       }
     } catch (error) {
-      setError(error.message || "Произошла ошибка");
+      console.error("Auth error:", error);
+      setLocalError(
+        error.message ||
+          (isSignUp ? "Ошибка при регистрации" : "Ошибка при входе")
+      );
     } finally {
       setIsSubmitting(false);
     }
   };
+
+  const isSubmitDisabled =
+    isSubmitting ||
+    isLoading ||
+    !formData.login.trim() ||
+    !formData.password.trim() ||
+    (isSignUp && !formData.name.trim());
 
   return (
     <>
@@ -121,83 +120,67 @@ function AuthForm({ isSignUp, setIsAuth }) {
         <AuthModal $isSignUp={isSignUp}>
           <AuthWrapper>
             <AuthTitle>{isSignUp ? "Регистрация" : "Вход"}</AuthTitle>
-            <AuthFormstyle id="form" action="#" onSubmit={handleSubmit}>
+            <AuthFormstyle onSubmit={handleSubmit}>
               <InputWrapper>
                 {isSignUp && (
                   <AuthInput
                     $error={errors.name}
                     type="text"
                     name="name"
-                    id="formname"
                     placeholder="Имя"
                     value={formData.name}
                     onChange={handleChange}
+                    disabled={isSubmitting || isLoading}
                   />
                 )}
                 <AuthInput
                   $error={errors.login}
                   type="text"
                   name="login"
-                  id="formlogin"
                   placeholder="Эл. почта"
                   value={formData.login}
                   onChange={handleChange}
+                  autoComplete="username"
+                  disabled={isSubmitting || isLoading}
                 />
                 <AuthInput
+                  $error={errors.password}
                   type="password"
                   name="password"
-                  id="formpassword"
                   placeholder="Пароль"
                   autoComplete="current-password"
                   value={formData.password}
                   onChange={handleChange}
+                  disabled={isSubmitting || isLoading}
                 />
               </InputWrapper>
 
               {error && <ErrorText>{error}</ErrorText>}
 
               <ButtonEnter
-                type="secondary"
-                disabled={
-                  isSubmitting ||
-                  !formData.login.trim() ||
-                  !formData.password.trim() ||
-                  (isSignUp && !formData.name.trim())
-                }
+                type="submit"
+                disabled={isSubmitDisabled}
                 style={{
-                  backgroundColor:
-                    isSubmitting ||
-                    !formData.login.trim() ||
-                    !formData.password.trim() ||
-                    (isSignUp && !formData.name.trim())
-                      ? "#94A6BE"
-                      : "#565EEF",
+                  backgroundColor: isSubmitDisabled ? "#94A6BE" : "#565EEF",
                   color: "#ffffff",
-                  cursor:
-                    isSubmitting ||
-                    !formData.login.trim() ||
-                    !formData.password.trim() ||
-                    (isSignUp && !formData.name.trim())
-                      ? "not-allowed"
-                      : "pointer",
+                  cursor: isSubmitDisabled ? "not-allowed" : "pointer",
                 }}
               >
-                {isSignUp ? "Зарегистрироваться" : "Войти"}
+                {isSubmitting || isLoading
+                  ? "Загрузка..."
+                  : isSignUp
+                  ? "Зарегистрироваться"
+                  : "Войти"}
               </ButtonEnter>
 
-              {!isSignUp && (
-                <FormGroup $isSignUp={isSignUp}>
-                  <p>Нужно зарегистрироваться?</p>
-                  <Link to="/register">Регистрируйтесь здесь</Link>
-                </FormGroup>
-              )}
-
-              {isSignUp && (
-                <FormGroup $isSignUp={isSignUp}>
-                  <p>Уже есть аккаунт?</p>
-                  <Link to="/login">Войдите здесь</Link>
-                </FormGroup>
-              )}
+              <FormGroup $isSignUp={isSignUp}>
+                <p>
+                  {isSignUp ? "Уже есть аккаунт?" : "Нужно зарегистрироваться?"}
+                </p>
+                <Link to={isSignUp ? "/login" : "/register"}>
+                  {isSignUp ? "Войдите здесь" : "Регистрируйтесь здесь"}
+                </Link>
+              </FormGroup>
             </AuthFormstyle>
           </AuthWrapper>
         </AuthModal>
@@ -205,4 +188,5 @@ function AuthForm({ isSignUp, setIsAuth }) {
     </>
   );
 }
+
 export default AuthForm;

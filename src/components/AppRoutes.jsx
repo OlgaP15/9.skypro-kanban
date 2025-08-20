@@ -14,6 +14,12 @@ function AppRoutes() {
     return Boolean(localStorage.getItem("token"));
   });
 
+  const [user, setUser] = useState(null);
+  function userLogin(newUser) {
+    setUser(newUser);
+    setIsAuth(true);
+  }
+
   return (
     <>
       <Routes>
@@ -24,10 +30,10 @@ function AppRoutes() {
           </Route>
           <Route path="/exit" element={<ExitPage setIsAuth={setIsAuth} />} />
         </Route>
-        <Route path="/login" element={<SignInPage setIsAuth={setIsAuth} />} />
+        <Route path="/login" element={<SignInPage userLogin={userLogin} />} />
         <Route
           path="/register"
-          element={<SignUpPage setIsAuth={setIsAuth} />}
+          element={<SignUpPage setIsAuth={setIsAuth} userLogin={userLogin} />}
         />
         <Route path="*" element={<NotFoundPage />} />
       </Routes>

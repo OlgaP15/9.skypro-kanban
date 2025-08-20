@@ -37,12 +37,6 @@ function PopNewCard({ onClose }) {
     navigate("/");
   };
 
-  //function handleCreate(e) {
-  // посмотреть с наставником
-  //e.preventDefault();
-  //handleClose();
-  //}
-
   return (
     <PopNewCardStyled id="popNewCard">
       <PopNewCardContainer onClick={handleClose}>
