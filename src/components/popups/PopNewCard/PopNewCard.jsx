@@ -20,21 +20,54 @@ import {
   CategoriesTheme,
   Subtitle,
 } from "./PopNewCard.styled";
+import { createTask } from "../../../services/tasksApi.js";
 
 function PopNewCard({ onClose }) {
-  const handleCreate = () => {
-    alert("Функция создания пока не реализована");
-    if (onClose) onClose();
-  };
-
   const [category, setCategory] = useState("Web Design");
   const [title, setTitle] = useState("");
-  const [text, setText] = useState("");
+  const [description, setDescription] = useState("");
+  const [date, setDate] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
 
   const navigate = useNavigate();
 
   const handleClose = () => {
     navigate("/");
+  };
+
+  const handleCreate = async () => {
+    if (!title.trim()) {
+      alert("Введите название задачи");
+      return;
+    }
+
+    const token = localStorage.getItem("token");
+    if (!token) {
+      alert("Ошибка авторизации");
+      return;
+    }
+
+    setIsLoading(true);
+    try {
+      const newTask = {
+        title: title.trim(),
+        description: description.trim(),
+        topic: category,
+        status: "БЕЗ СТАТУСА", 
+        date: date || new Date().toLocaleDateString('ru-RU')
+      };
+
+      console.log("Создаваемая задача:", newTask);
+      
+      await createTask({ token, task: newTask });
+      if (onClose) onClose();
+      window.location.reload();
+    } catch (error) {
+      console.error("Полная ошибка создания:", error);
+      alert("Не удалось создать задачу: " + error.message);
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return (
@@ -54,6 +87,7 @@ function PopNewCard({ onClose }) {
                     id="formTitle"
                     placeholder="Введите название задачи..."
                     autoFocus
+                    value={title}
                     onChange={(e) => setTitle(e.target.value)}
                   />
                 </FormNewBlock>
@@ -63,11 +97,15 @@ function PopNewCard({ onClose }) {
                     name="text"
                     id="textArea"
                     placeholder="Введите описание задачи..."
-                    onChange={(e) => setText(e.target.value)}
+                    value={description}
+                    onChange={(e) => setDescription(e.target.value)}
                   />
                 </FormNewBlock>
               </PopNewCardForm>
-              <Calendar />
+              <Calendar
+                value={date}
+                onChange={setDate}
+              />
             </PopNewCardWrap>
             <Categories>
               <CategoriesP>Выберете категорию</CategoriesP>
@@ -101,9 +139,10 @@ function PopNewCard({ onClose }) {
             <FormNewCreate
               className="_hover01"
               id="btnCreate"
-              onClick={handleCreate} // посмотреть
+              onClick={handleCreate}
+              disabled={isLoading || !title.trim()}
             >
-              Создать задачу
+              {isLoading ? "Создание..." : "Создать задачу"}
             </FormNewCreate>
           </PopNewCardContent>
         </PopNewCardBlock>
@@ -111,4 +150,5 @@ function PopNewCard({ onClose }) {
     </PopNewCardStyled>
   );
 }
+
 export default PopNewCard;

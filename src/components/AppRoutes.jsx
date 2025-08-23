@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Routes, Route } from "react-router-dom";
 import MainPage from "../pages/MainPage";
 import CardPage from "../pages/CardPage";
@@ -11,14 +11,29 @@ import PrivateRoute from "./PrivateRoute";
 
 function AppRoutes() {
   const [isAuth, setIsAuth] = useState(() => {
-    return Boolean(localStorage.getItem("token"));
+    const token = localStorage.getItem("token");
+    const userInfo = localStorage.getItem("userInfo");
+    return Boolean(token && userInfo);
   });
 
-  const [user, setUser] = useState(null);
+  const [user, setUser] = useState(() => {
+    const userInfo = localStorage.getItem("userInfo");
+    return userInfo ? JSON.parse(userInfo) : null;
+  });
+
   function userLogin(newUser) {
     setUser(newUser);
     setIsAuth(true);
   }
+
+  useEffect(() => {
+    const token = localStorage.getItem("token");
+    const userInfo = localStorage.getItem("userInfo");
+    if (token && userInfo) {
+      setIsAuth(true);
+      setUser(JSON.parse(userInfo));
+    }
+  }, []);
 
   return (
     <>

@@ -37,7 +37,6 @@ function AuthForm({
   const [localError, setLocalError] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  // Объединяем ошибки из props и локальные
   const error = propError || localError;
 
   const validateForm = () => {
@@ -64,7 +63,6 @@ function AuthForm({
       [name]: value,
     }));
 
-    // Сбрасываем ошибку при изменении поля
     if (errors[name]) {
       setErrors((prev) => ({ ...prev, [name]: false }));
     }
@@ -88,10 +86,9 @@ function AuthForm({
       const response = await authFunction(dataToSend);
 
       if (response) {
-        localStorage.setItem(
-          "userInfo",
-          JSON.stringify(response.user || response)
-        );
+        localStorage.setItem("token", response.token || response.user?.token);
+        localStorage.setItem("userInfo", JSON.stringify(response.user || response));
+        
         userLogin(response.user || response);
         navigate("/");
       }

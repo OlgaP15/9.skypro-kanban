@@ -20,29 +20,25 @@ import {
   CategoryTheme,
 } from "./PopBrowse.styled";
 import { statusList } from "../../../data.js";
+import { updateTask, deleteTask } from "../../../services/tasksApi.js";
 
-function PopBrowse({ task, onClose }) {
-  const handleDelete = () => {
-    alert("Функция удаления пока не реализована");
-    if (onClose) onClose();
-  };
-  const handleSave = () => {
-    alert("Функция сохранения пока не реализована");
-    if (onClose) onClose();
-  };
-
+function PopBrowse({ task, onClose, onTaskUpdated }) { 
   const navigate = useNavigate();
   const [isEditMode, setIsEditMode] = useState(false);
   const [editedStatus, setEditedStatus] = useState(task.status);
-  const [editedText, setEditedText] = useState(task.text);
+  const [editedText, setEditedText] = useState(task.description || "");
   const [editDate, setEditDate] = useState(task.date || "");
+  const [isLoading, setIsLoading] = useState(false);
 
   const userInfo = JSON.parse(localStorage.getItem("userInfo"));
   const token = userInfo?.token;
 
   if (!task) {
+    console.error("Задача не передана в PopBrowse");
     return null;
   }
+
+  console.log("Полученная задача в PopBrowse:", task);
 
   const handleClose = () => navigate("/");
 
@@ -63,8 +59,71 @@ function PopBrowse({ task, onClose }) {
 
   const handleCancel = () => {
     setEditedStatus(task.status);
-    setEditedText(task.text);
+    setEditedText(task.description || "");
     setIsEditMode(false);
+  };
+
+  const handleSave = async () => {
+    if (!token) {
+      alert("Ошибка авторизации");
+      return;
+    }
+
+    setIsLoading(true);
+    try {
+
+      const formattedStatus = statusList.find(s => s === editedStatus) || "БЕЗ СТАТУСА";
+      
+      const updatedTask = {
+        title: task.title,
+        description: editedText,
+        status: formattedStatus, 
+        date: editDate,
+        topic: task.topic
+      };
+
+      console.log("Отправляемые данные для обновления:", updatedTask);
+      
+      await updateTask({ token, id: task.id, task: updatedTask });
+
+      if (onTaskUpdated) {
+        onTaskUpdated();
+      }
+      
+      if (onClose) onClose();
+    } catch (error) {
+      console.error("Ошибка при обновлении задачи:", error);
+      alert("Не удалось обновить задачу: " + error.message);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const handleDelete = async () => {
+    if (!token) {
+      alert("Ошибка авторизации");
+      return;
+    }
+
+    if (!window.confirm("Вы уверены, что хотите удалить эту задачу?")) {
+      return;
+    }
+
+    setIsLoading(true);
+    try {
+      await deleteTask({ token, id: task.id });
+      
+      if (onTaskUpdated) {
+        onTaskUpdated();
+      }
+      
+      if (onClose) onClose();
+    } catch (error) {
+      console.error("Ошибка при удалении задачи:", error);
+      alert("Не удалось удалить задачу: " + error.message);
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return (
@@ -73,9 +132,9 @@ function PopBrowse({ task, onClose }) {
         <PopBrowseBlock onClick={(e) => e.stopPropagation()}>
           <PopBrowseContent>
             <PopBrowseTopBlock>
-              <PopBrowseTitle>{task.title}</PopBrowseTitle>
+              <PopBrowseTitle>{task.title || "Без названия"}</PopBrowseTitle>
               <CategoryTheme className={`_${themeClass} _active-category`}>
-                <p className={`_${themeClass}`}>{task.topic}</p>
+                <p className={`_${themeClass}`}>{task.topic || "Без категории"}</p>
               </CategoryTheme>
             </PopBrowseTopBlock>
             <Status>
@@ -106,7 +165,7 @@ function PopBrowse({ task, onClose }) {
                       color: "#ffffff",
                     }}
                   >
-                    <p>{task.status}</p>
+                    <p>{task.status || "БЕЗ СТАТУСА"}</p>
                   </StatusTheme>
                 )}
               </StatusThemes>
@@ -139,12 +198,14 @@ function PopBrowse({ task, onClose }) {
                   <button
                     className="btn-browse__edit _btn-bor _hover03"
                     onClick={() => setIsEditMode(true)}
+                    disabled={isLoading}
                   >
                     Редактировать задачу
                   </button>
                   <button
                     className="btn-browse__delete _btn-bor _hover03"
                     onClick={handleDelete}
+                    disabled={isLoading}
                   >
                     Удалить задачу
                   </button>
@@ -152,6 +213,7 @@ function PopBrowse({ task, onClose }) {
                 <button
                   className="btn-edit__edit _btn-bg _hover01"
                   onClick={onClose}
+                  disabled={isLoading}
                 >
                   Закрыть
                 </button>
@@ -162,12 +224,14 @@ function PopBrowse({ task, onClose }) {
                   <button
                     className="btn-edit__edit _btn-bg _hover01"
                     onClick={handleSave}
+                    disabled={isLoading}
                   >
-                    Сохранить
+                    {isLoading ? "Сохранение..." : "Сохранить"}
                   </button>
                   <button
                     className="btn-edit__edit _btn-bor _hover03"
                     onClick={handleCancel}
+                    disabled={isLoading}
                   >
                     Отменить
                   </button>
@@ -175,6 +239,7 @@ function PopBrowse({ task, onClose }) {
                     className="btn-edit__delete _btn-bor _hover03"
                     id="btnDelete"
                     onClick={handleDelete}
+                    disabled={isLoading}
                   >
                     Удалить задачу
                   </button>
@@ -182,6 +247,7 @@ function PopBrowse({ task, onClose }) {
                 <button
                   onClick={handleClose}
                   className="btn-edit__close _btn-bg _hover01"
+                  disabled={isLoading}
                 >
                   Закрыть
                 </button>
@@ -193,4 +259,5 @@ function PopBrowse({ task, onClose }) {
     </PopBrowseStyled>
   );
 }
+
 export default PopBrowse;

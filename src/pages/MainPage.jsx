@@ -10,7 +10,7 @@ function MainPage({ loading, setIsAuth }) {
   const location = useLocation();
   const navigate = useNavigate();
   const isNewCardOpen = location.pathname === "/new-card";
-  const closeNewCard = () => navigate(-1);
+  const closeNewCard = () => navigate("/");
 
   return (
     <div className="wrapper">

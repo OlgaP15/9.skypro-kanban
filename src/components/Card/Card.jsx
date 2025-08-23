@@ -11,21 +11,27 @@ import {
 } from "./Card.styled";
 
 function Card({ card }) {
-  const theme = card.theme.toLowerCase().replace(" ", "");
+  const theme = card.topic ? card.topic.toLowerCase().replace(" ", "") : "webdesign";
   const navigate = useNavigate();
   const location = useLocation();
+
+  if (!card) {
+    return null;
+  }
+  const handleCardClick = () => {
+    console.log("Клик по карточке:", card.id);
+    navigate(`/card/${card.id}`, { state: { background: location } });
+  };
 
   return (
     <CardItem>
       <CardWrapper>
         <CardGroup>
           <CardTheme theme={theme}>
-            <p>{card.theme}</p>
+            <p>{card.topic || "Без категории"}</p>
           </CardTheme>
           <CardButton
-            onClick={() =>
-              navigate(`/card/${card.id}`, { state: { background: location } })
-            }
+            onClick={handleCardClick} ю
           >
             <div></div>
             <div></div>
@@ -33,7 +39,7 @@ function Card({ card }) {
           </CardButton>
         </CardGroup>
         <CardContent>
-          <CardTitle>{card.title}</CardTitle>
+          <CardTitle>{card.title || "Без названия"}</CardTitle>
           <CardDate>
             <svg
               xmlns="http://www.w3.org/2000/svg"
@@ -63,11 +69,12 @@ function Card({ card }) {
                 </clipPath>
               </defs>
             </svg>
-            <p>{card.date}</p>
+            <p>{card.date || new Date().toLocaleDateString('ru-RU')}</p>
           </CardDate>
         </CardContent>
       </CardWrapper>
     </CardItem>
   );
 }
+
 export default Card;
