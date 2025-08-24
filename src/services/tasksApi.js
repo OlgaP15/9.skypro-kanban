@@ -40,36 +40,54 @@ export async function createTask({ token, task }) {
 
 export async function updateTask({ token, id, task }) {
   try {
-    console.log("Обновление задачи:", { id, task }); 
-    
-    const response = await axios.patch(`${API_URL}/${id}`, task, {
+    if (!id) {
+      console.error("updateTask: не передан id", { id, task });
+      throw new Error("ID задачи не передан");
+    }
+    const url = `${API_URL}/${id}`; 
+    const response = await axios.patch(url, task, {
       headers: {
-        Authorization: `Bearer ${token}`,
-        "Content-Type": "text/html", 
+        Authorization: `Bearer ${token}`, 
+        "Content-Type": "text/html",
       },
     });
-    
-    console.log("Ответ при обновлении:", response.data); 
     return response.data;
   } catch (error) {
-    console.error("Полная ошибка при обновлении:", error.response?.data || error);
+    console.error("Полная ошибка при обновлении:", {
+      url: `${API_URL}/${id}`, 
+      data: task,
+      status: error.response?.status,
+      resp: error.response?.data,
+      message: error.message,
+    });
     throw new Error(
-      error.response?.data?.message || 
-      error.response?.data?.error || 
-      "Ошибка при обновлении задачи"
+      error.response?.data?.message ||
+        error.response?.data?.error ||
+        "Ошибка при обновлении задачи"
     );
   }
 }
 
 export async function deleteTask({ token, id }) {
   try {
-    const response = await axios.delete(`${API_URL}/${id}`, {
+    if (!id) {
+      console.error("deleteTask: не передан id");
+      throw new Error("ID задачи не передан");
+    }
+    const url = `${API_URL}/${id}`; 
+    const response = await axios.delete(url, {
       headers: {
-        Authorization: `Bearer ${token}`,
+        Authorization: `Bearer ${token}`, й
       },
     });
     return response.data;
   } catch (error) {
+    console.error("Ошибка при удалении:", {
+      url: `${API_URL}/${id}`, 
+      status: error.response?.status,
+      resp: error.response?.data,
+      message: error.message,
+    });
     throw new Error(error.response?.data?.message || "Ошибка при удалении задачи");
   }
 }

@@ -3,8 +3,6 @@ import Card from "../Card/Card";
 import { ColumnWrapper, ColumnTitle, CardsContainer } from "./Column.styled";
 
 function Column({ title, cards }) {
-  console.log(`Колонка "${title}":`, cards);
-  
   return (
     <ColumnWrapper>
       <ColumnTitle>
@@ -12,14 +10,11 @@ function Column({ title, cards }) {
       </ColumnTitle>
       <CardsContainer>
         {cards && cards.length > 0 ? (
-          cards.map((card) => (
-            <Card 
-              key={card.id}
-              card={card} 
-            />
+          cards.map((card, index) => (
+            <Card key={card.id ?? `${card.title || "no-title"}-${index}`} card={card} />
           ))
         ) : (
-          <div style={{ padding: '10px', color: '#94A6BE', fontStyle: 'italic' }}>
+          <div style={{ padding: "10px", color: "#94A6BE", fontStyle: "italic" }}>
             Нет задач
           </div>
         )}

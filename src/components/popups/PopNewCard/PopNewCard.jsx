@@ -20,7 +20,7 @@ import {
   CategoriesTheme,
   Subtitle,
 } from "./PopNewCard.styled";
-import { createTask } from "../../../services/tasksApi.js";
+import { useTasks } from "../../../contexts/TaskContext";
 
 function PopNewCard({ onClose }) {
   const [category, setCategory] = useState("Web Design");
@@ -29,41 +29,28 @@ function PopNewCard({ onClose }) {
   const [date, setDate] = useState("");
   const [isLoading, setIsLoading] = useState(false);
 
+  const { createTask } = useTasks();
   const navigate = useNavigate();
 
-  const handleClose = () => {
-    navigate("/");
-  };
+  const handleClose = () => navigate(-1);
 
   const handleCreate = async () => {
     if (!title.trim()) {
       alert("Введите название задачи");
       return;
     }
-
-    const token = localStorage.getItem("token");
-    if (!token) {
-      alert("Ошибка авторизации");
-      return;
-    }
-
     setIsLoading(true);
     try {
       const newTask = {
         title: title.trim(),
         description: description.trim(),
         topic: category,
-        status: "БЕЗ СТАТУСА", 
-        date: date || new Date().toLocaleDateString('ru-RU')
+        status: "БЕЗ СТАТУСА",
+        date: date || new Date().toLocaleDateString("ru-RU"),
       };
-
-      console.log("Создаваемая задача:", newTask);
-      
-      await createTask({ token, task: newTask });
-      if (onClose) onClose();
-      window.location.reload();
+      await createTask(newTask);
+      onClose ? onClose() : handleClose();
     } catch (error) {
-      console.error("Полная ошибка создания:", error);
       alert("Не удалось создать задачу: " + error.message);
     } finally {
       setIsLoading(false);
@@ -102,34 +89,25 @@ function PopNewCard({ onClose }) {
                   />
                 </FormNewBlock>
               </PopNewCardForm>
-              <Calendar
-                value={date}
-                onChange={setDate}
-              />
+              <Calendar value={date} onChange={setDate} />
             </PopNewCardWrap>
             <Categories>
               <CategoriesP>Выберете категорию</CategoriesP>
               <CategoriesThemes>
                 <CategoriesTheme
-                  className={`_web-design ${
-                    category === "Web Design" ? "_active-category" : ""
-                  }`}
+                  className={`_web-design ${category === "Web Design" ? "_active-category" : ""}`}
                   onClick={() => setCategory("Web Design")}
                 >
                   <p className="_web-design">Web Design</p>
                 </CategoriesTheme>
                 <CategoriesTheme
-                  className={`_research ${
-                    category === "Research" ? "_active-category" : ""
-                  }`}
+                  className={`_research ${category === "Research" ? "_active-category" : ""}`}
                   onClick={() => setCategory("Research")}
                 >
                   <p className="_research">Research</p>
                 </CategoriesTheme>
                 <CategoriesTheme
-                  className={`_copywriting ${
-                    category === "Copywriting" ? "_active-category" : ""
-                  }`}
+                  className={`_copywriting ${category === "Copywriting" ? "_active-category" : ""}`}
                   onClick={() => setCategory("Copywriting")}
                 >
                   <p className="_copywriting">Copywriting</p>

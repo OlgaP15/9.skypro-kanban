@@ -20,27 +20,28 @@ import {
   CategoryTheme,
 } from "./PopBrowse.styled";
 import { statusList } from "../../../data.js";
-import { updateTask, deleteTask } from "../../../services/tasksApi.js";
+import { useTasks } from "../../../contexts/TaskContext";
 
-function PopBrowse({ task, onClose, onTaskUpdated }) { 
+function normalizeDateOut(date) {
+  if (!date) return "";
+ь
+  if (typeof date === "string" && date.includes(".")) return date;
+  const d = new Date(date);
+  if (isNaN(d)) return date;
+  return d.toLocaleDateString("ru-RU");
+}
+
+function PopBrowse({ task, onClose }) {
   const navigate = useNavigate();
+  const { updateTask, deleteTask } = useTasks();
+
   const [isEditMode, setIsEditMode] = useState(false);
-  const [editedStatus, setEditedStatus] = useState(task.status);
-  const [editedText, setEditedText] = useState(task.description || "");
-  const [editDate, setEditDate] = useState(task.date || "");
+  const [editedStatus, setEditedStatus] = useState(task?.status || "БЕЗ СТАТУСА");
+  const [editedText, setEditedText] = useState(task?.description || "");
+  const [editDate, setEditDate] = useState(task?.date || "");
   const [isLoading, setIsLoading] = useState(false);
 
-  const userInfo = JSON.parse(localStorage.getItem("userInfo"));
-  const token = userInfo?.token;
-
-  if (!task) {
-    console.error("Задача не передана в PopBrowse");
-    return null;
-  }
-
-  console.log("Полученная задача в PopBrowse:", task);
-
-  const handleClose = () => navigate("/");
+  if (!task) return null;
 
   const getThemeClass = (topic) => {
     switch (topic) {
@@ -58,73 +59,65 @@ function PopBrowse({ task, onClose, onTaskUpdated }) {
   const themeClass = getThemeClass(task.topic);
 
   const handleCancel = () => {
-    setEditedStatus(task.status);
+    setEditedStatus(task.status || "БЕЗ СТАТУСА");
     setEditedText(task.description || "");
+    setEditDate(task.date || "");
     setIsEditMode(false);
   };
 
-  const handleSave = async () => {
-    if (!token) {
-      alert("Ошибка авторизации");
-      return;
-    }
+  function normalizeDateOut(date) {
+  if (!date) return "";
+  if (typeof date === "string" && date.includes(".")) return date;
+  const d = new Date(date);
+  if (isNaN(d)) return date;
+  return d.toLocaleDateString("ru-RU");
+}
 
+  const handleSave = async () => {
     setIsLoading(true);
     try {
+      const serverId = task._id || task.id;
+      if (!serverId) {
+        alert("Не найден ID задачи для обновления");
+        return;
+      }
 
-      const formattedStatus = statusList.find(s => s === editedStatus) || "БЕЗ СТАТУСА";
-      
       const updatedTask = {
         title: task.title,
         description: editedText,
-        status: formattedStatus, 
-        date: editDate,
-        topic: task.topic
+        status: editedStatus, 
+        date: normalizeDateOut(editDate || task.date),
+        topic: task.topic,
       };
 
-      console.log("Отправляемые данные для обновления:", updatedTask);
-      
-      await updateTask({ token, id: task.id, task: updatedTask });
-
-      if (onTaskUpdated) {
-        onTaskUpdated();
-      }
-      
-      if (onClose) onClose();
+      await updateTask(serverId, updatedTask); s
+      onClose && onClose();
     } catch (error) {
-      console.error("Ошибка при обновлении задачи:", error);
-      alert("Не удалось обновить задачу: " + error.message);
+      alert("Не удалось обновить задачу: " + (error?.message || "Неизвестная ошибка"));
     } finally {
       setIsLoading(false);
     }
   };
 
   const handleDelete = async () => {
-    if (!token) {
-      alert("Ошибка авторизации");
-      return;
-    }
-
-    if (!window.confirm("Вы уверены, что хотите удалить эту задачу?")) {
-      return;
-    }
-
+    if (!window.confirm("Вы уверены, что хотите удалить эту задачу?")) return;
     setIsLoading(true);
     try {
-      await deleteTask({ token, id: task.id });
-      
-      if (onTaskUpdated) {
-        onTaskUpdated();
+      const serverId = task._id || task.id;
+      if (!serverId) {
+        alert("Не найден ID задачи для удаления");
+        return;
       }
-      
-      if (onClose) onClose();
+      await deleteTask(serverId);
+      onClose && onClose();
     } catch (error) {
-      console.error("Ошибка при удалении задачи:", error);
-      alert("Не удалось удалить задачу: " + error.message);
+      alert("Не удалось удалить задачу: " + (error?.message || "Неизвестная ошибка"));
     } finally {
       setIsLoading(false);
     }
   };
+
+  const handleClose = () => navigate(-1);
 
   return (
     <PopBrowseStyled onClick={onClose} id="popBrowse">
@@ -137,6 +130,7 @@ function PopBrowse({ task, onClose, onTaskUpdated }) {
                 <p className={`_${themeClass}`}>{task.topic || "Без категории"}</p>
               </CategoryTheme>
             </PopBrowseTopBlock>
+
             <Status>
               <StatusP>Статус</StatusP>
               <StatusThemes>
@@ -146,10 +140,8 @@ function PopBrowse({ task, onClose, onTaskUpdated }) {
                       key={status}
                       onClick={() => setEditedStatus(status)}
                       style={{
-                        backgroundColor:
-                          editedStatus === status ? "#94A6BE" : "#ffffff",
-                        borderColor:
-                          editedStatus === status ? "#94A6BE" : "#94A6BE",
+                        backgroundColor: editedStatus === status ? "#94A6BE" : "#ffffff",
+                        borderColor: "#94A6BE",
                         color: editedStatus === status ? "#ffffff" : "#94A6BE",
                         cursor: "pointer",
                       }}
@@ -170,6 +162,7 @@ function PopBrowse({ task, onClose, onTaskUpdated }) {
                 )}
               </StatusThemes>
             </Status>
+
             <PopBrowseWrap>
               <PopBrowseForm id="formBrowseCard" action="#">
                 <FormBrowseBlock>
@@ -186,12 +179,9 @@ function PopBrowse({ task, onClose, onTaskUpdated }) {
                   />
                 </FormBrowseBlock>
               </PopBrowseForm>
-              <Calendar
-                value={editDate}
-                onChange={setEditDate}
-                isDisabled={!isEditMode}
-              />
+              <Calendar value={editDate} onChange={setEditDate} isDisabled={!isEditMode} />
             </PopBrowseWrap>
+
             {!isEditMode ? (
               <PopBrowseButtons className="pop-browse__btn-browse">
                 <div className="btn-group">

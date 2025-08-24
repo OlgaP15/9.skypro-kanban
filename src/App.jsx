@@ -1,12 +1,18 @@
 import React from "react";
 import { Wrapper } from "./styles/Wrapper.styled";
 import AppRoutes from "./components/AppRoutes";
+import { AuthProvider } from "./contexts/AuthContext";
+import { TaskProvider } from "./contexts/TaskContext";
 
 function App() {
   return (
-    <Wrapper>
-      <AppRoutes />
-    </Wrapper>
+    <AuthProvider>
+      <TaskProvider>
+        <Wrapper>
+          <AppRoutes />
+        </Wrapper>
+      </TaskProvider>
+    </AuthProvider>
   );
 }
 

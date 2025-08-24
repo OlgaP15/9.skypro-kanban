@@ -1,70 +1,28 @@
 import { useParams, useNavigate } from "react-router-dom";
 import PopBrowse from "../components/popups/PopBrowse/PopBrowse.jsx";
-import { useState, useEffect } from "react";
-import { fetchTasks } from "../services/tasksApi.js";
+import { useMemo } from "react";
+import { useTasks } from "../contexts/TaskContext";
 
-function CardPage({ onClose }) { 
+function CardPage() {
   const { id } = useParams();
   const navigate = useNavigate();
-  const [task, setTask] = useState(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
+  const { tasks, tasksLoading, tasksError } = useTasks();
 
-  const loadTask = async () => {
-    try {
-      setLoading(true);
-      const token = localStorage.getItem("token");
-      
-      if (!token) {
-        throw new Error("Токен не найден");
-      }
+  const task = useMemo(
+    () => tasks.find((t) => String(t.id ?? t._id) === String(id)),
+    [tasks, id]
+  );
 
-      const tasks = await fetchTasks({ token });
-      const foundTask = tasks.find((card) => card.id === Number(id));
-      
-      console.log("Найденная задача:", foundTask);
-      
-      if (!foundTask) {
-        throw new Error("Задача не найдена");
-      }
-
-      setTask(foundTask);
-    } catch (error) {
-      console.error("Ошибка при загрузке задачи:", error);
-      setError(error.message);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  useEffect(() => {
-    loadTask();
-  }, [id]);
-
-  const handleTaskUpdated = () => {
-    console.log("Задача обновлена, перезагружаем...");
-    loadTask(); 
-  };
-
-  const handleClose = () => {
-    if (onClose) {
-      onClose();
-    } else {
-      navigate(-1); 
-    }
-  };
-
-  if (loading) return <div>Загрузка...</div>;
-  if (error) return <div>Ошибка: {error}</div>;
+  if (tasksLoading) return <div>Загрузка...</div>;
+  if (tasksError) return <div>Ошибка: {tasksError}</div>;
   if (!task) return <div>Задача не найдена</div>;
 
-  console.log("Передача задачи в PopBrowse:", task);
+  const handleClose = () => navigate(-1);
 
   return (
-    <PopBrowse 
-      task={task} 
-      onClose={handleClose} 
-      onTaskUpdated={handleTaskUpdated}
+    <PopBrowse
+      task={task}
+      onClose={handleClose}
     />
   );
 }
