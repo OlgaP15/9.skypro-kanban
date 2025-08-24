@@ -90,7 +90,7 @@ function PopBrowse({ task, onClose }) {
         topic: task.topic,
       };
 
-      await updateTask(serverId, updatedTask); s
+      await updateTask(serverId, updatedTask);
       onClose && onClose();
     } catch (error) {
       alert("Не удалось обновить задачу: " + (error?.message || "Неизвестная ошибка"));
