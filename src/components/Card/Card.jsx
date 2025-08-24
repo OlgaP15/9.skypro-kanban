@@ -31,7 +31,7 @@ function Card({ card }) {
             <p>{card.topic || "Без категории"}</p>
           </CardTheme>
           <CardButton
-            onClick={handleCardClick} ю
+            onClick={handleCardClick} 
           >
             <div></div>
             <div></div>
