@@ -5,7 +5,6 @@ export const ColumnWrapper = styled.div.attrs(props => ({
   $cards: undefined, 
   key: undefined, 
 }))`
-  width: 20%;
   margin: 0 auto;
   display: block;
 
