@@ -1,7 +1,10 @@
 import styled from "styled-components";
 
-export const ColumnWrapper = styled.div`
-  width: 20%;
+export const ColumnWrapper = styled.div.attrs(props => ({
+  $title: undefined, 
+  $cards: undefined, 
+  key: undefined, 
+}))`
   margin: 0 auto;
   display: block;
 
@@ -10,7 +13,9 @@ export const ColumnWrapper = styled.div`
   }
 `;
 
-export const ColumnTitle = styled.div`
+export const ColumnTitle = styled.div.attrs(props => ({
+  key: undefined,
+}))`
   padding: 0 5px;
   margin: 15px 0;
 
@@ -23,7 +28,9 @@ export const ColumnTitle = styled.div`
   }
 `;
 
-export const CardsContainer = styled.div`
+export const CardsContainer = styled.div.attrs(props => ({
+  key: undefined,
+}))`
   width: 100%;
   display: flex;
   flex-direction: column;

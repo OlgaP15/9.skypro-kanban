@@ -9,24 +9,23 @@ import {
   PopExitYesButton,
   PopExitNoButton,
 } from "../PopExit/PopExit.styled";
+import { useAuth } from "../../../contexts/AuthContext";
 
-function PopExit({ setIsAuth, onClose }) {
+function PopExit({ onClose }) {
   const navigate = useNavigate();
+  const { logout } = useAuth();
 
   const handleYesExit = (e) => {
     e.preventDefault();
-    setIsAuth(false);
-    localStorage.removeItem("isAuth");
-    localStorage.removeItem("userInfo");
-    localStorage.removeItem("token");
-    onClose();
+    logout();
+    onClose && onClose();
     setTimeout(() => {
       navigate("/login");
     }, 0);
   };
 
   const handleNoExit = () => {
-    onClose();
+    onClose && onClose();
   };
 
   return (
@@ -38,11 +37,7 @@ function PopExit({ setIsAuth, onClose }) {
           </PopExitTitle>
           <PopExitForm id="formExit" action="#">
             <PopExitFormGroup>
-              <PopExitYesButton
-                type="button"
-                id="exitYes"
-                onClick={handleYesExit}
-              >
+              <PopExitYesButton type="button" id="exitYes" onClick={handleYesExit}>
                 Да, выйти
               </PopExitYesButton>
               <PopExitNoButton type="button" id="exitNo" onClick={handleNoExit}>

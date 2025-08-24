@@ -24,13 +24,10 @@ export async function signIn({ login, password }) {
     return response.data;
   } catch (error) {
     if (error.response) {
-      // Сервер ответил с ошибкой
       throw new Error(error.response.data.message || "Ошибка при входе");
     } else if (error.request) {
-      // Запрос был сделан, но ответа не было
       throw new Error("Сервер не отвечает. Проверьте интернет-соединение.");
     } else {
-      // Ошибка при настройке запроса
       throw new Error("Ошибка при отправке запроса");
     }
   }

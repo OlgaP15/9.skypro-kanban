@@ -1,6 +1,6 @@
 import SignIn from "../components/SignIn/SignIn";
 
-function SignInPage({ userLogin }) {
-  return <SignIn userLogin={userLogin} />;
+function SignInPage() {
+  return <SignIn />;
 }
 export default SignInPage;

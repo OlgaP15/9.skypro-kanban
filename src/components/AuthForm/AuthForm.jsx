@@ -13,32 +13,18 @@ import {
   FormGroup,
 } from "./AuthForm.styled.js";
 import { GlobalStyles } from "../../styles/GlobalStyles.styled.js";
-import { signIn, signUp } from "../../services/api.js";
+import { useAuth } from "../../contexts/AuthContext";
 
-function AuthForm({
-  isSignUp,
-  userLogin,
-  error: propError,
-  isLoading,
-}) {
+function AuthForm({ isSignUp }) {
   const navigate = useNavigate();
-  const [formData, setFormData] = useState({
-    name: "",
-    login: "",
-    password: "",
-  });
+  const { login, register, isAuthLoading } = useAuth();
 
-  const [errors, setErrors] = useState({
-    name: false,
-    login: false,
-    password: false,
-  });
-
+  const [formData, setFormData] = useState({ name: "", login: "", password: "" });
+  const [errors, setErrors] = useState({ name: false, login: false, password: false });
   const [localError, setLocalError] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  // Объединяем ошибки из props и локальные
-  const error = propError || localError;
+  const error = localError;
 
   const validateForm = () => {
     const newErrors = {
@@ -46,61 +32,38 @@ function AuthForm({
       login: !formData.login.trim(),
       password: !formData.password.trim(),
     };
-
     setErrors(newErrors);
-
     if (newErrors.name || newErrors.login || newErrors.password) {
       setLocalError("Заполните все обязательные поля");
       return false;
     }
-
     return true;
   };
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setFormData((prev) => ({
-      ...prev,
-      [name]: value,
-    }));
-
-    // Сбрасываем ошибку при изменении поля
-    if (errors[name]) {
-      setErrors((prev) => ({ ...prev, [name]: false }));
-    }
+    setFormData((prev) => ({ ...prev, [name]: value }));
+    if (errors[name]) setErrors((prev) => ({ ...prev, [name]: false }));
     if (error) setLocalError("");
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (!validateForm()) return;
-    if (isLoading || isSubmitting) return;
+    if (isAuthLoading || isSubmitting) return;
 
     setIsSubmitting(true);
     setLocalError("");
 
     try {
-      const authFunction = isSignUp ? signUp : signIn;
-      const dataToSend = isSignUp
-        ? formData
-        : { login: formData.login, password: formData.password };
-
-      const response = await authFunction(dataToSend);
-
-      if (response) {
-        localStorage.setItem(
-          "userInfo",
-          JSON.stringify(response.user || response)
-        );
-        userLogin(response.user || response);
-        navigate("/");
+      if (isSignUp) {
+        await register(formData);
+      } else {
+        await login({ login: formData.login, password: formData.password });
       }
-    } catch (error) {
-      console.error("Auth error:", error);
-      setLocalError(
-        error.message ||
-          (isSignUp ? "Ошибка при регистрации" : "Ошибка при входе")
-      );
+      navigate("/");
+    } catch (err) {
+      setLocalError(err.message || (isSignUp ? "Ошибка при регистрации" : "Ошибка при входе"));
     } finally {
       setIsSubmitting(false);
     }
@@ -108,7 +71,7 @@ function AuthForm({
 
   const isSubmitDisabled =
     isSubmitting ||
-    isLoading ||
+    isAuthLoading ||
     !formData.login.trim() ||
     !formData.password.trim() ||
     (isSignUp && !formData.name.trim());
@@ -130,7 +93,7 @@ function AuthForm({
                     placeholder="Имя"
                     value={formData.name}
                     onChange={handleChange}
-                    disabled={isSubmitting || isLoading}
+                    disabled={isSubmitting || isAuthLoading}
                   />
                 )}
                 <AuthInput
@@ -141,7 +104,7 @@ function AuthForm({
                   value={formData.login}
                   onChange={handleChange}
                   autoComplete="username"
-                  disabled={isSubmitting || isLoading}
+                  disabled={isSubmitting || isAuthLoading}
                 />
                 <AuthInput
                   $error={errors.password}
@@ -151,7 +114,7 @@ function AuthForm({
                   autoComplete="current-password"
                   value={formData.password}
                   onChange={handleChange}
-                  disabled={isSubmitting || isLoading}
+                  disabled={isSubmitting || isAuthLoading}
                 />
               </InputWrapper>
 
@@ -166,7 +129,7 @@ function AuthForm({
                   cursor: isSubmitDisabled ? "not-allowed" : "pointer",
                 }}
               >
-                {isSubmitting || isLoading
+                {isSubmitting || isAuthLoading
                   ? "Загрузка..."
                   : isSignUp
                   ? "Зарегистрироваться"
@@ -174,9 +137,7 @@ function AuthForm({
               </ButtonEnter>
 
               <FormGroup $isSignUp={isSignUp}>
-                <p>
-                  {isSignUp ? "Уже есть аккаунт?" : "Нужно зарегистрироваться?"}
-                </p>
+                <p>{isSignUp ? "Уже есть аккаунт?" : "Нужно зарегистрироваться?"}</p>
                 <Link to={isSignUp ? "/login" : "/register"}>
                   {isSignUp ? "Войдите здесь" : "Регистрируйтесь здесь"}
                 </Link>

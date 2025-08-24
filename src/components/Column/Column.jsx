@@ -9,11 +9,18 @@ function Column({ title, cards }) {
         <p>{title}</p>
       </ColumnTitle>
       <CardsContainer>
-        {cards.map((card) => (
-          <Card key={card.id} card={card} />
-        ))}
+        {cards && cards.length > 0 ? (
+          cards.map((card, index) => (
+            <Card key={card.id ?? `${card.title || "no-title"}-${index}`} card={card} />
+          ))
+        ) : (
+          <div style={{ padding: "10px", color: "#94A6BE", fontStyle: "italic" }}>
+            Нет задач
+          </div>
+        )}
       </CardsContainer>
     </ColumnWrapper>
   );
 }
+
 export default Column;
