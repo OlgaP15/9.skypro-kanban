@@ -77,7 +77,7 @@ export async function deleteTask({ token, id }) {
     const url = `${API_URL}/${id}`; 
     const response = await axios.delete(url, {
       headers: {
-        Authorization: `Bearer ${token}`, й
+        Authorization: `Bearer ${token}`,
       },
     });
     return response.data;

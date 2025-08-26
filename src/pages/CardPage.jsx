@@ -15,7 +15,7 @@ function CardPage() {
 
   if (tasksLoading) return <div>Загрузка...</div>;
   if (tasksError) return <div>Ошибка: {tasksError}</div>;
-  if (!task) return <div>Задача не найдена</div>;
+
 
   const handleClose = () => navigate(-1);
 

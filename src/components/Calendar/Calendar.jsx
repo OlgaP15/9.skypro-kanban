@@ -51,7 +51,6 @@ function Calendar({ value, onChange, isDisabled = false }) {
     const month = currentDate.getMonth();
     
     const firstDay = new Date(year, month, 1);
-    const lastDay = new Date(year, month + 1, 0);
     const startDay = new Date(firstDay);
     startDay.setDate(startDay.getDate() - firstDay.getDay() + (firstDay.getDay() === 0 ? -6 : 1));
     
@@ -74,12 +73,21 @@ function Calendar({ value, onChange, isDisabled = false }) {
     setCurrentDate(new Date(currentDate.getFullYear(), currentDate.getMonth() + 1, 1));
   };
 
+  // ✅ Вспомогательное форматирование для отображения (дд.мм.гггг)
+  const formatDate = (date) => {
+    if (!(date instanceof Date) || isNaN(date)) return "";
+    const day = String(date.getDate()).padStart(2, "0");
+    const month = String(date.getMonth() + 1).padStart(2, "0");
+    const year = date.getFullYear();
+    return `${day}.${month}.${year}`;
+  };
+
   const handleDateSelect = (date) => {
     if (isDisabled) return;
     
     setSelectedDate(date);
     if (onChange) {
-      onChange(date.toISOString());
+      onChange(date.toISOString()); // ✅ ВАЖНО: наружу отдаём ISO, чтобы создание задачи не ломалось
     }
   };
 
@@ -122,9 +130,10 @@ function Calendar({ value, onChange, isDisabled = false }) {
     return `${months[currentDate.getMonth()]} ${currentDate.getFullYear()}`;
   };
 
+  // ✅ Исправлено: жёстко показываем дд.мм.гггг для подписи ниже календаря
   const formatDateDisplay = () => {
     if (!selectedDate) return "Выберите срок исполнения";
-    return `Срок исполнения: ${selectedDate.toLocaleDateString('ru-RU')}`;
+    return `Срок исполнения: ${formatDate(selectedDate)}`;
   };
 
   const days = getCalendarData();
@@ -201,7 +210,7 @@ function Calendar({ value, onChange, isDisabled = false }) {
                     cursor: isDisabled ? 'not-allowed' : 'pointer',
                     opacity: isDisabled ? 0.5 : 1
                   }}
-                  title={date.toLocaleDateString('ru-RU')}
+                  title={formatDate(date)} /* ✅ подсказка дд.мм.гггг */
                 >
                   {date.getDate()}
                 </CalendarCell>
@@ -211,7 +220,7 @@ function Calendar({ value, onChange, isDisabled = false }) {
         </CalendarContent>
         <CalendarPeriod>
           <CalendarText className="date-end">
-            {formatDateDisplay()}
+            {formatDateDisplay()} /* ✅ подпись дд.мм.гггг */
           </CalendarText>
         </CalendarPeriod>
       </CalendarBlock>

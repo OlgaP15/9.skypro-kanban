@@ -1,25 +1,20 @@
-import { createContext, useContext, useEffect, useMemo, useState } from "react";
+import { createContext, useContext, useMemo, useState } from "react";
 import { signIn as apiSignIn, signUp as apiSignUp } from "../services/api";
 
 const AuthContext = createContext(null);
 
 export function AuthProvider({ children }) {
-  const [user, setUser] = useState(null);
-  const [token, setToken] = useState(null);
-  const [isAuthLoading, setIsAuthLoading] = useState(false);
-
-  useEffect(() => {
-    const t = localStorage.getItem("token");
+  // лениво читаем localStorage один раз на первый рендер
+  const [token, setToken] = useState(() => localStorage.getItem("token"));
+  const [user, setUser] = useState(() => {
     const u = localStorage.getItem("userInfo");
-    if (t && u) {
-      setToken(t);
-      try {
-        setUser(JSON.parse(u));
-      } catch {
-        setUser(null);
-      }
+    try {
+      return u ? JSON.parse(u) : null;
+    } catch {
+      return null;
     }
-  }, []);
+  });
+  const [isAuthLoading, setIsAuthLoading] = useState(false);
 
   const login = async ({ login, password }) => {
     setIsAuthLoading(true);
@@ -60,7 +55,6 @@ export function AuthProvider({ children }) {
     setToken(null);
     localStorage.removeItem("token");
     localStorage.removeItem("userInfo");
-    localStorage.removeItem("isAuth");
   };
 
   const isAuth = Boolean(token && user);
