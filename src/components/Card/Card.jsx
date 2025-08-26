@@ -19,14 +19,13 @@ function Card({ card }) {
 
   if (!card) return null;
 
-  // ✅ Универсальный форматтер: если уже "дд.мм.гггг" — не трогаем; если ISO — преобразуем.
   const formatDate = (date) => {
     if (!date) return "";
     if (typeof date === "string" && /^\d{2}\.\d{2}\.\d{4}$/.test(date)) {
-      return date; // уже правильно отформатированная строка
+      return date; 
     }
-    const d = new Date(date); // ISO/число/Date
-    if (isNaN(d)) return date; // подстраховка: показываем как есть
+    const d = new Date(date); 
+    if (isNaN(d)) return date; 
     const day = String(d.getDate()).padStart(2, "0");
     const month = String(d.getMonth() + 1).padStart(2, "0");
     const year = d.getFullYear();
