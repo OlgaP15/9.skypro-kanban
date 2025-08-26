@@ -20,8 +20,9 @@ export const ColumnTitle = styled.div.attrs(props => ({
   margin: 15px 0;
 
   p {
+    min-width: 220px;
     color: #94a6be;
-    font-size: 14px;
+    font-size: 16px;
     font-weight: 600;
     line-height: 1;
     text-transform: uppercase;
