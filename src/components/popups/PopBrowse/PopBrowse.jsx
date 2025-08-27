@@ -22,14 +22,14 @@ import {
 import { statusList } from "../../../data.js";
 import { useTasks } from "../../../contexts/TaskContext";
 
-function normalizeDateOut(date) {
-  if (!date) return "";
-ь
-  if (typeof date === "string" && date.includes(".")) return date;
-  const d = new Date(date);
-  if (isNaN(d)) return date;
-  return d.toLocaleDateString("ru-RU");
-}
+//function normalizeDateOut(date) {
+//  if (!date) return "";
+
+//  if (typeof date === "string" && date.includes(".")) return date;
+//  const d = new Date(date);
+//  if (isNaN(d)) return date;
+//  return d.toLocaleDateString("ru-RU");
+//}
 
 function PopBrowse({ task, onClose }) {
   const navigate = useNavigate();

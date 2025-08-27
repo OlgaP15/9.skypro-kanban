@@ -69,7 +69,7 @@ export function TaskProvider({ children }) {
   const updateTask = async (id, task) => {
     const apiTask = {
       ...task,
-      status: toApiStatusMap[task.status] || task.status,
+      status: toApiStatusMap[task.status] || task.status
     };
     await apiUpdate({ token, id, task: apiTask });
     await loadTasks();

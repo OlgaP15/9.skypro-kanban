@@ -22,7 +22,7 @@ export async function createTask({ token, task }) {
     const response = await axios.post(API_URL, task, {
       headers: {
         Authorization: `Bearer ${token}`,
-        "Content-Type": "text/html", 
+        "Content-Type": "", 
       },
     });
     
@@ -48,7 +48,7 @@ export async function updateTask({ token, id, task }) {
     const response = await axios.patch(url, task, {
       headers: {
         Authorization: `Bearer ${token}`, 
-        "Content-Type": "text/html",
+        "Content-Type": "",
       },
     });
     return response.data;
