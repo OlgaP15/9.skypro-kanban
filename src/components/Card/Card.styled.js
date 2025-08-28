@@ -64,8 +64,8 @@ export const CardTheme = styled.div`
   height: 20px;
   padding: 5px 14px;
   border-radius: 18px;
-  background-color: ${(props) => themes[props.theme]?.background || "#ff6d00"};
-  color: ${(props) => themes[props.theme]?.color || "#ffffff"};
+  background-color: ${(props) => themes[props.theme]?.background || "#f7c8a4ff"};
+  color: ${(props) => themes[props.theme]?.color || "#ff6d00"};
 
   p {
     font-size: 10px;

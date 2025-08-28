@@ -45,7 +45,7 @@ export async function updateTask({ token, id, task }) {
       throw new Error("ID задачи не передан");
     }
     const url = `${API_URL}/${id}`; 
-    const response = await axios.patch(url, task, {
+    const response = await axios.put(url, task, {
       headers: {
         Authorization: `Bearer ${token}`, 
         "Content-Type": "",
