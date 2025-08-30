@@ -16,33 +16,33 @@ import {
   CalendarText,
 } from "./Calendar.styled";
 
+const parseDate = (value) => {
+  if (!value) return null;
+  if (value instanceof Date && !isNaN(value)) return value;
+  if (typeof value === "string" && value.includes('T')) {
+    const d = new Date(value);
+    return !isNaN(d) ? d : null;
+  }
+  if (typeof value === "string" && value.includes('.')) {
+    const parts = value.split('.');
+    if (parts.length === 3) {
+      const d = new Date(parts[2], parts[1] - 1, parts[0]);
+      return !isNaN(d) ? d : null;
+    }
+  }
+  return null;
+};
+
 function Calendar({ value, onChange, isDisabled = false }) {
-  const [currentDate, setCurrentDate] = useState(new Date());
-  const [selectedDate, setSelectedDate] = useState(null);
-  const [hoverDate, setHoverDate] = useState(null);
+  const initialDate = parseDate(value);
+  const [currentDate, setCurrentDate] = useState(initialDate || new Date());
+  const [selectedDate, setSelectedDate] = useState(initialDate);
 
   useEffect(() => {
-    if (value) {
-      try {
-        let date;
-        if (typeof value === "string" && value.includes("T")) {
-          date = new Date(value);
-        } else if (typeof value === "string") {
-          const parts = value.split(".");
-          if (parts.length === 3) {
-            date = new Date(parts[2], parts[1] - 1, parts[0]);
-          }
-        } else if (typeof value === "number") {
-          date = new Date(value);
-        }
-
-        if (date instanceof Date && !isNaN(date)) {
-          setSelectedDate(date);
-          setCurrentDate(new Date(date.getFullYear(), date.getMonth(), 1));
-        }
-      } catch (error) {
-        console.error("Ошибка парсинга даты:", error);
-      }
+    const newDate = parseDate(value);
+    if (newDate) {
+      setSelectedDate(newDate);
+      setCurrentDate(new Date(newDate.getFullYear(), newDate.getMonth(), 1));
     }
   }, [value]);
 
@@ -77,7 +77,6 @@ function Calendar({ value, onChange, isDisabled = false }) {
 
   const handleDateSelect = (date) => {
     if (isDisabled) return;
-
     setSelectedDate(date);
     if (onChange) {
       onChange(date.toISOString());
@@ -99,15 +98,6 @@ function Calendar({ value, onChange, isDisabled = false }) {
       date.getDate() === selectedDate.getDate() &&
       date.getMonth() === selectedDate.getMonth() &&
       date.getFullYear() === selectedDate.getFullYear()
-    );
-  };
-
-  const isHovered = (date) => {
-    if (!hoverDate) return false;
-    return (
-      date.getDate() === hoverDate.getDate() &&
-      date.getMonth() === hoverDate.getMonth() &&
-      date.getFullYear() === hoverDate.getFullYear()
     );
   };
 
@@ -180,7 +170,6 @@ function Calendar({ value, onChange, isDisabled = false }) {
               const isWeekend = date.getDay() === 0 || date.getDay() === 6;
               const isDayToday = isToday(date);
               const isDaySelected = isSelected(date);
-              const isDayHovered = isHovered(date);
 
               return (
                 <CalendarCell
@@ -189,11 +178,8 @@ function Calendar({ value, onChange, isDisabled = false }) {
                     ${isWeekend ? "weekend" : ""}
                     ${isDayToday ? "current" : ""}
                     ${isDaySelected ? "active-day" : ""}
-                    ${isDayHovered ? "hovered" : ""}
                   `}
                   onClick={() => handleDateSelect(date)}
-                  onMouseEnter={() => !isDisabled && setHoverDate(date)}
-                  onMouseLeave={() => !isDisabled && setHoverDate(null)}
                   style={{
                     cursor: isDisabled ? "not-allowed" : "pointer",
                     opacity: isDisabled ? 0.5 : 1,

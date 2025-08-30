@@ -30,3 +30,12 @@ export const LoadingText = styled.div`
   margin-top: 50px;
   animation: pulse 1.5s infinite;
 `;
+
+export const EmptyTasksText = styled.div`
+  width: 100%;
+  text-align: center;
+  font-size: 18px;
+  color: #94A6BE;
+  margin-top: 50px;
+  font-style: italic;
+`;

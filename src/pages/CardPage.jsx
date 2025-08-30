@@ -1,6 +1,6 @@
 import { useParams, useNavigate } from "react-router-dom";
 import PopBrowse from "../components/popups/PopBrowse/PopBrowse.jsx";
-import { useMemo } from "react";
+import { useMemo, useEffect } from "react";
 import { useTasks } from "../contexts/TaskContext";
 
 function CardPage() {
@@ -13,9 +13,14 @@ function CardPage() {
     [tasks, id]
   );
 
+  useEffect(() => {
+    if (!task) {
+      navigate(-1);
+    }
+  }, [task, navigate]);
+
   if (tasksLoading) return <div>Загрузка...</div>;
   if (tasksError) return <div>Ошибка: {tasksError}</div>;
-
 
   const handleClose = () => navigate(-1);
 
