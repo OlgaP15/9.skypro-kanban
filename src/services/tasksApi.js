@@ -17,7 +17,7 @@ export async function fetchTasks({ token }) {
 
 export async function createTask({ token, task }) {
   try {
-    console.log("Отправляемые данные:", task);
+    console.log("Отправляемые данные на сервер:", task);
     
     const response = await axios.post(API_URL, task, {
       headers: {
@@ -26,10 +26,14 @@ export async function createTask({ token, task }) {
       },
     });
     
-    console.log("Ответ от API:", response.data);
+    console.log("Ответ от сервера:", response.data);
     return response.data;
   } catch (error) {
-    console.error("Полная ошибка API:", error.response?.data || error);
+    console.error("Ошибка при создании задачи:", {
+      status: error.response?.status,
+      data: error.response?.data,
+      message: error.message
+    });
     throw new Error(
       error.response?.data?.message || 
       error.response?.data?.error || 
@@ -41,24 +45,26 @@ export async function createTask({ token, task }) {
 export async function updateTask({ token, id, task }) {
   try {
     if (!id) {
-      console.error("updateTask: не передан id", { id, task });
       throw new Error("ID задачи не передан");
     }
-    const url = `${API_URL}/${id}`; 
+    
+    console.log("Отправляемые данные для обновления:", { id, task });
+    
+    const url = `${API_URL}/${id}`;
     const response = await axios.put(url, task, {
       headers: {
         Authorization: `Bearer ${token}`, 
         "Content-Type": "",
       },
     });
+    
+    console.log("Ответ от сервера при обновлении:", response.data);
     return response.data;
   } catch (error) {
-    console.error("Полная ошибка при обновлении:", {
-      url: `${API_URL}/${id}`, 
-      data: task,
+    console.error("Ошибка при обновлении задачи:", {
       status: error.response?.status,
-      resp: error.response?.data,
-      message: error.message,
+      data: error.response?.data,
+      message: error.message
     });
     throw new Error(
       error.response?.data?.message ||
@@ -71,22 +77,25 @@ export async function updateTask({ token, id, task }) {
 export async function deleteTask({ token, id }) {
   try {
     if (!id) {
-      console.error("deleteTask: не передан id");
       throw new Error("ID задачи не передан");
     }
-    const url = `${API_URL}/${id}`; 
+    
+    console.log("Удаление задачи с ID:", id); 
+    
+    const url = `${API_URL}/${id}`;
     const response = await axios.delete(url, {
       headers: {
         Authorization: `Bearer ${token}`,
       },
     });
+    
+    console.log("Ответ от сервера при удалении:", response.data); 
     return response.data;
   } catch (error) {
-    console.error("Ошибка при удалении:", {
-      url: `${API_URL}/${id}`, 
+    console.error("Ошибка при удалении задачи:", {
       status: error.response?.status,
-      resp: error.response?.data,
-      message: error.message,
+      data: error.response?.data,
+      message: error.message
     });
     throw new Error(error.response?.data?.message || "Ошибка при удалении задачи");
   }

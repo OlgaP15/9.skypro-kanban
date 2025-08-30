@@ -101,7 +101,7 @@ function AuthForm({ isSignUp }) {
                   type="text"
                   name="login"
                   placeholder="Эл. почта"
-                  value={formData.login}
+                    value={formData.login}
                   onChange={handleChange}
                   autoComplete="username"
                   disabled={isSubmitting || isAuthLoading}

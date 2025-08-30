@@ -22,6 +22,34 @@ import {
 } from "./PopNewCard.styled";
 import { useTasks } from "../../../contexts/TaskContext";
 
+const formatDateForServer = (dateString) => {
+  if (!dateString) {
+    const today = new Date();
+    const day = String(today.getDate()).padStart(2, '0');
+    const month = String(today.getMonth() + 1).padStart(2, '0');
+    const year = today.getFullYear();
+    return `${day}.${month}.${year}`;
+  }
+  
+  if (typeof dateString === 'string' && dateString.includes('.')) {
+    return dateString; 
+  }
+  
+  try {
+    const date = new Date(dateString);
+    if (isNaN(date)) return "";
+    
+    const day = String(date.getDate()).padStart(2, '0');
+    const month = String(date.getMonth() + 1).padStart(2, '0');
+    const year = date.getFullYear();
+    
+    return `${day}.${month}.${year}`;
+  } catch (error) {
+    console.error("Ошибка форматирования даты:", error);
+    return "";
+  }
+};
+
 function PopNewCard({ onClose }) {
   const [category, setCategory] = useState("Web Design");
   const [title, setTitle] = useState("");
@@ -39,19 +67,26 @@ function PopNewCard({ onClose }) {
       alert("Введите название задачи");
       return;
     }
+
     setIsLoading(true);
+    
     try {
       const newTask = {
         title: title.trim(),
         description: description.trim(),
         topic: category,
-        status: "БЕЗ СТАТУСА",
-        date: date || new Date().toLocaleDateString("ru-RU"),
+        status: "Без статуса", 
+        date: formatDateForServer(date),
       };
+      
+      console.log("Создаваемая задача:", newTask);
+      
       await createTask(newTask);
+      alert("Задача создана!");
       onClose ? onClose() : handleClose();
     } catch (error) {
       alert("Не удалось создать задачу: " + error.message);
+      console.error("Ошибка создания:", error);
     } finally {
       setIsLoading(false);
     }

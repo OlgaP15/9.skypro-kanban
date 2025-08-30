@@ -10,27 +10,26 @@ import {
   CardDate,
 } from "./Card.styled";
 
+export const formatDisplayDate = (date) => {
+  if (!date) return "";
+  if (typeof date === "string" && /^\d{2}\.\d{2}\.\d{4}$/.test(date)) {
+    return date;
+  }
+  const d = new Date(date);
+  if (isNaN(d)) return ""; 
+  const day = String(d.getDate()).padStart(2, "0");
+  const month = String(d.getMonth() + 1).padStart(2, "0");
+  const year = d.getFullYear();
+  return `${day}.${month}.${year}`;
+};
+
 function Card({ card }) {
   const theme = card.topic
     ? card.topic.toLowerCase().replace(" ", "")
     : "webdesign";
   const navigate = useNavigate();
-  const location = useLocation();
 
   if (!card) return null;
-
-  const formatDate = (date) => {
-    if (!date) return "";
-    if (typeof date === "string" && /^\d{2}\.\d{2}\.\d{4}$/.test(date)) {
-      return date; 
-    }
-    const d = new Date(date); 
-    if (isNaN(d)) return date; 
-    const day = String(d.getDate()).padStart(2, "0");
-    const month = String(d.getMonth() + 1).padStart(2, "0");
-    const year = d.getFullYear();
-    return `${day}.${month}.${year}`;
-  };
 
   const handleCardClick = () => {
     const cardId = card.id ?? card._id ?? card.taskId ?? card.uuid;
@@ -85,7 +84,7 @@ function Card({ card }) {
                 </clipPath>
               </defs>
             </svg>
-            <p>{formatDate(card.date) || formatDate(new Date())}</p>
+            <p>{formatDisplayDate(card.date)}</p>
           </CardDate>
         </CardContent>
       </CardWrapper>
