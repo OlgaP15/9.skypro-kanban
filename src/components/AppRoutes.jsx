@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React from "react";
 import { Routes, Route } from "react-router-dom";
 import MainPage from "../pages/MainPage";
 import CardPage from "../pages/CardPage";
@@ -10,34 +10,19 @@ import NotFoundPage from "../pages/NotFoundPage";
 import PrivateRoute from "./PrivateRoute";
 
 function AppRoutes() {
-  const [isAuth, setIsAuth] = useState(() => {
-    return Boolean(localStorage.getItem("token"));
-  });
-
-  const [user, setUser] = useState(null);
-  function userLogin(newUser) {
-    setUser(newUser);
-    setIsAuth(true);
-  }
-
   return (
-    <>
-      <Routes>
-        <Route element={<PrivateRoute isAuth={isAuth} />}>
-          <Route path="/" element={<MainPage setIsAuth={setIsAuth} />}>
-            <Route path="/card/:id" element={<CardPage />} />
-            <Route path="/new-card" element={<NewCardPage />} />
-          </Route>
-          <Route path="/exit" element={<ExitPage setIsAuth={setIsAuth} />} />
+    <Routes>
+      <Route element={<PrivateRoute />}>
+        <Route path="/" element={<MainPage />}>
+          <Route path="new-card" element={<NewCardPage />} />
+          <Route path="/card/:id" element={<CardPage />} />
         </Route>
-        <Route path="/login" element={<SignInPage userLogin={userLogin} />} />
-        <Route
-          path="/register"
-          element={<SignUpPage setIsAuth={setIsAuth} userLogin={userLogin} />}
-        />
-        <Route path="*" element={<NotFoundPage />} />
-      </Routes>
-    </>
+        <Route path="/exit" element={<ExitPage />} />
+      </Route>
+      <Route path="/login" element={<SignInPage />} />
+      <Route path="/register" element={<SignUpPage />} />
+      <Route path="*" element={<NotFoundPage />} />
+    </Routes>
   );
 }
 

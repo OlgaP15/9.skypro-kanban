@@ -44,6 +44,10 @@ export const CalendarDayName = styled.div`
   font-weight: 500;
   line-height: normal;
   letter-spacing: -0.2px;
+  
+  &.weekend {
+    color: #94A6BE;
+  }
 `;
 
 export const CalendarCells = styled.div`
@@ -66,24 +70,35 @@ export const CalendarCell = styled.div`
   font-size: 10px;
   line-height: 1;
   letter-spacing: -0.2px;
-  cursor: pointer;
-
-  &:hover {
-    color: #94a6be;
-    background-color: #eaeef6;
-  }
-
-  &.active-day {
-    background-color: #94a6be;
-    color: #ffffff;
-  }
+  transition: all 0.2s ease;
 
   &.other-month {
-    opacity: 0;
+    opacity: 0.3;
+  }
+
+  &.weekend {
+    color: #94A6BE;
   }
 
   &.current {
     font-weight: 700;
+    color: #000;
+  }
+
+  &.active-day {
+    background-color: #565EEF;
+    color: #ffffff;
+    font-weight: 500;
+  }
+
+  &:hover:not(.active-day):not(.other-month) {
+    background-color: #EAEEF6;
+    color: #000;
+  }
+
+  &.hovered:not(.active-day):not(.other-month) {
+    background-color: #F0F2F5;
+    color: #000;
   }
 `;
 
@@ -105,10 +120,16 @@ export const NavActions = styled.div`
 export const NavAction = styled.div`
   width: 18px;
   height: 25px;
-  cursor: pointer;
+  cursor: ${props => props.disabled ? 'not-allowed' : 'pointer'};
   display: flex;
   align-items: center;
   justify-content: center;
+  opacity: ${props => props.disabled ? 0.5 : 1};
+
+  &:hover:not([disabled]) {
+    background-color: #EAEEF6;
+    border-radius: 4px;
+  }
 
   svg {
     fill: #94a6be;
@@ -126,5 +147,9 @@ export const CalendarText = styled.p`
 
   span {
     color: #000000;
+  }
+  
+  &.date-end {
+    font-weight: 500;
   }
 `;

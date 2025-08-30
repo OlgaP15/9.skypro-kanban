@@ -1,37 +1,40 @@
-import React, { useState, useEffect } from "react";
+import React from "react";
 import Column from "../Column/Column";
-import { cardList, statusList } from "../../data.js";
+import { statusList } from "../../data.js";
 import { MainBlock, MainContent, LoadingText } from "./Main.styled";
+import { useTasks } from "../../contexts/TaskContext";
 
 function Main() {
-  const [isLoading, setIsLoading] = useState(true);
+  const { tasks, tasksLoading, tasksError } = useTasks();
 
-  useEffect(() => {
-    const timer = setTimeout(() => {
-      setIsLoading(false);
-    }, 1500);
-
-    return () => clearTimeout(timer);
-  }, []);
+  if (tasksError) {
+    return (
+      <MainBlock>
+        <div className="container">
+          <MainContent>
+            <LoadingText>Ошибка загрузки: {tasksError}</LoadingText>
+          </MainContent>
+        </div>
+      </MainBlock>
+    );
+  }
 
   return (
     <MainBlock>
       <div className="container">
         <MainContent>
-          {isLoading ? (
+          {tasksLoading ? (
             <LoadingText>Данные загружаются...</LoadingText>
           ) : (
-            statusList.map((status) => (
-              <Column
-                key={status}
-                title={status}
-                cards={cardList.filter((card) => card.status === status)}
-              />
-            ))
+            statusList.map((status) => {
+              const filteredTasks = tasks.filter((task) => task.status === status);
+              return <Column key={status} title={status} cards={filteredTasks} />;
+            })
           )}
         </MainContent>
       </div>
     </MainBlock>
   );
 }
+
 export default Main;

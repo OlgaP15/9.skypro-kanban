@@ -10,7 +10,7 @@ import {
   HeaderUser,
 } from "./Header.styled";
 
-function Header({ setIsAuth }) {
+function Header() {
   const [isUserPopupOpen, setIsUserPopupOpen] = useState(false);
   const navigate = useNavigate();
 
@@ -36,11 +36,7 @@ function Header({ setIsAuth }) {
             </Link>
           </HeaderLogo>
           <HeaderNav>
-            <HeaderButton
-              className="_hover01"
-              id="btnMainNew"
-              onClick={() => navigate("new-card")}
-            >
+            <HeaderButton className="_hover01" id="btnMainNew" onClick={() => navigate("new-card")}>
               Создать новую задачу
             </HeaderButton>
             <HeaderUser
@@ -53,11 +49,7 @@ function Header({ setIsAuth }) {
             >
               {userName}
             </HeaderUser>
-            <PopUser
-              $isVisible={isUserPopupOpen}
-              onClose={toggleUserPopup}
-              setIsAuth={setIsAuth}
-            />
+            <PopUser $isVisible={isUserPopupOpen} onClose={toggleUserPopup} />
           </HeaderNav>
         </HeaderContent>
       </div>

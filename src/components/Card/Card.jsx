@@ -11,29 +11,51 @@ import {
 } from "./Card.styled";
 
 function Card({ card }) {
-  const theme = card.theme.toLowerCase().replace(" ", "");
+  const theme = card.topic
+    ? card.topic.toLowerCase().replace(" ", "")
+    : "webdesign";
   const navigate = useNavigate();
   const location = useLocation();
 
+  if (!card) return null;
+
+  const formatDate = (date) => {
+    if (!date) return "";
+    if (typeof date === "string" && /^\d{2}\.\d{2}\.\d{4}$/.test(date)) {
+      return date; 
+    }
+    const d = new Date(date); 
+    if (isNaN(d)) return date; 
+    const day = String(d.getDate()).padStart(2, "0");
+    const month = String(d.getMonth() + 1).padStart(2, "0");
+    const year = d.getFullYear();
+    return `${day}.${month}.${year}`;
+  };
+
+  const handleCardClick = () => {
+    const cardId = card.id ?? card._id ?? card.taskId ?? card.uuid;
+    if (!cardId) {
+      console.warn("Карточка без id:", card);
+      return;
+    }
+    navigate(`/card/${cardId}`);
+  };
+
   return (
-    <CardItem>
+    <CardItem onClick={handleCardClick}>
       <CardWrapper>
         <CardGroup>
           <CardTheme theme={theme}>
-            <p>{card.theme}</p>
+            <p>{card.topic || "Без категории"}</p>
           </CardTheme>
-          <CardButton
-            onClick={() =>
-              navigate(`/card/${card.id}`, { state: { background: location } })
-            }
-          >
+          <CardButton onClick={handleCardClick}>
             <div></div>
             <div></div>
             <div></div>
           </CardButton>
         </CardGroup>
         <CardContent>
-          <CardTitle>{card.title}</CardTitle>
+          <CardTitle>{card.title || "Без названия"}</CardTitle>
           <CardDate>
             <svg
               xmlns="http://www.w3.org/2000/svg"
@@ -50,7 +72,7 @@ function Card({ card }) {
                   strokeLinejoin="round"
                 />
                 <path
-                  d="M11.7812 4.0625H1.21875M3.25 1.21875V2.03125V1.21875ZM9.75 1.21875V2.03125V1.21875Z"
+                  d="M11.7812 4.0625H1.21875 M3.25 1.21875V2.03125 M9.75 1.21875V2.03125"
                   stroke="#94A6BE"
                   strokeWidth="0.8"
                   strokeLinecap="round"
@@ -63,11 +85,12 @@ function Card({ card }) {
                 </clipPath>
               </defs>
             </svg>
-            <p>{card.date}</p>
+            <p>{formatDate(card.date) || formatDate(new Date())}</p>
           </CardDate>
         </CardContent>
       </CardWrapper>
     </CardItem>
   );
 }
+
 export default Card;

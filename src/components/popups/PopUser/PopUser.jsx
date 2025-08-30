@@ -8,7 +8,7 @@ import {
 } from "../PopUser/PopUser.styled";
 import PopExit from "../PopExit/PopExit";
 
-function PopUser({ $isVisible, onClose, setIsAuth }) {
+function PopUser({ $isVisible, onClose }) {
   const [isExitOpen, setIsExitOpen] = useState(false);
   const ref = useRef();
 
@@ -33,7 +33,6 @@ function PopUser({ $isVisible, onClose, setIsAuth }) {
       </PopUserContainer>
       {isExitOpen && (
         <PopExit
-          setIsAuth={setIsAuth}
           onClose={() => {
             setIsExitOpen(false);
             onClose && onClose();
