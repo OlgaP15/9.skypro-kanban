@@ -4,7 +4,7 @@ export const HeaderBlock = styled.header`
   width: 100%;
   margin: 0 auto;
   background-color: ${({ theme }) => theme.headerBg};
-  transition: background-color 0.3s;
+  transition: background-color 0.2s;
 `;
 
 export const HeaderContent = styled.div`

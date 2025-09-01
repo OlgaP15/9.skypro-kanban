@@ -4,7 +4,7 @@ import { ThemeProvider as StyledThemeProvider } from "styled-components";
 export const ThemeContext = createContext();
 
 const lightTheme = {
-  background: "#f1f1f1",
+  background: "#e2dede",
   text: "#000000",
   cardBg: "#ffffff",
   modalBg: "#ffffff",
