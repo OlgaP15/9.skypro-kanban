@@ -7,8 +7,8 @@ export const NotFoundContainer = styled.div`
   align-items: center;
   justify-content: center;
   height: 100vh;
-  background-color: #F1F1F1; 
-  color: #000000; 
+  background-color: ${({ theme }) => theme.background};
+  color: ${({ theme }) => theme.text};
   font-family: 'Roboto', sans-serif;
   text-align: center;
 `;
@@ -16,26 +16,26 @@ export const NotFoundContainer = styled.div`
 export const NotFoundTitle = styled.h1`
   font-size: 128px; 
   margin-bottom: 0.1em;
-  color: #565EEF; 
+  color: ${({ theme }) => theme.accent};
   font-weight: 700;
 `;
 
 export const NotFoundText = styled.p`
   font-size: 18px;
   margin-bottom: 2em;
-  color: #94A6BE; 
+  color: ${({ theme }) => theme.textSecondary};
 `;
 
 export const NotFoundLink = styled(Link)`
   padding: 10px 20px;
-  background-color: #565EEF;
-  color: #ffffff;
+  background-color: ${({ theme }) => theme.accent};
+  color: ${({ theme }) => theme.linkText || "#ffffff"};
   border-radius: 4px;
   font-size: 16px;
   font-weight: 500;
   transition: background-color 0.3s ease;
 
   &:hover {
-    background-color: #33399b;
+    background-color: ${({ theme }) => theme.accentHover};
   }
 `;

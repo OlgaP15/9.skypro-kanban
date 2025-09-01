@@ -33,7 +33,9 @@ export const GlobalStyles = createGlobalStyle`
     width: 100%;
     height: 100%;
     font-family: "Roboto", Arial, Helvetica, sans-serif;
-    color: #000000;
+    background-color: ${({ theme }) => theme.background};
+    color: ${({ theme }) => theme.text};
+    transition: background-color 0.3s, color 0.3s;
   }
 
   #root {
@@ -88,15 +90,15 @@ export const GlobalStyles = createGlobalStyle`
   }
 
   ._web-design {
-    background-color: #ffe4c2;
+    background-color: #fac98dff;
     color: #ff6d00;
   }
   ._research {
-    background-color: #b4fdd1;
+    background-color: #99f5beff;
     color: #06b16e;
   }
   ._copywriting {
-    background-color: #e9d4ff;
+    background-color: #c89af8ff;
     color: #9a48f1;
   }
   ._gray {
@@ -115,25 +117,13 @@ export const GlobalStyles = createGlobalStyle`
   }  
 
   @keyframes pulse {
-    0% {
-      opacity: 1;
-    }
-    50% {
-      opacity: 0.5;
-    }
-    100% {
-      opacity: 1;
-    }
+    0% { opacity: 1; }
+    50% { opacity: 0.5; }
+    100% { opacity: 1; }
   }
 
   @keyframes card-animation {
-    0% {
-      height: 0;
-      opacity: 0;
-    }
-    100% {
-      height: auto;
-      opacity: 1;
-    }
+    0% { height: 0; opacity: 0; }
+    100% { height: auto; opacity: 1; }
   }
 `;

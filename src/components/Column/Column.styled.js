@@ -21,11 +21,12 @@ export const ColumnTitle = styled.div.attrs(props => ({
 
   p {
     min-width: 220px;
-    color: #94a6be;
+    color: ${({ theme }) => theme.mutedText};
     font-size: 16px;
     font-weight: 600;
     line-height: 1;
     text-transform: uppercase;
+    transition: color 0.3s;
   }
 `;
 

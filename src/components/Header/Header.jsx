@@ -1,6 +1,7 @@
-import React, { useState } from "react";
+import React, { useState, useContext } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import PopUser from "../popups/PopUser/PopUser";
+import { ThemeContext } from "../../contexts/ThemeContext";
 import {
   HeaderBlock,
   HeaderContent,
@@ -13,6 +14,7 @@ import {
 function Header() {
   const [isUserPopupOpen, setIsUserPopupOpen] = useState(false);
   const navigate = useNavigate();
+  const { theme } = useContext(ThemeContext); 
 
   const toggleUserPopup = () => {
     setIsUserPopupOpen((prev) => !prev);
@@ -21,22 +23,23 @@ function Header() {
   const userName =
     JSON.parse(localStorage.getItem("userInfo") || "{}").name || "Пользователь";
 
+  const logoSrc = theme === "dark" ? "/assets/logo_dark.png" : "/assets/logo.png";
+
   return (
     <HeaderBlock>
       <div className="container">
         <HeaderContent>
-          <HeaderLogo className="_show _light">
+          <HeaderLogo>
             <Link to="/" target="_self">
-              <img src="/assets/logo.png" alt="logo"></img>
-            </Link>
-          </HeaderLogo>
-          <HeaderLogo className="_dark">
-            <Link to="/" target="_self">
-              <img src="/assets/logo_dark.png" alt="logo"></img>
+              <img src={logoSrc} alt="logo" />
             </Link>
           </HeaderLogo>
           <HeaderNav>
-            <HeaderButton className="_hover01" id="btnMainNew" onClick={() => navigate("new-card")}>
+            <HeaderButton
+              className="_hover01"
+              id="btnMainNew"
+              onClick={() => navigate("new-card")}
+            >
               Создать новую задачу
             </HeaderButton>
             <HeaderUser
@@ -56,4 +59,5 @@ function Header() {
     </HeaderBlock>
   );
 }
+
 export default Header;

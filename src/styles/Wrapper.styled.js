@@ -5,7 +5,9 @@ export const Wrapper = styled.div`
   width: 100vw;
   min-height: 100vh;
   overflow: hidden;
-  background-color: #f1f1f1;
+  background-color: ${({ theme }) => theme.background};
+  color: ${({ theme }) => theme.text};
+  transition: background-color 0.3s, color 0.3s;
 `;
 
 export const Container = styled.div`
