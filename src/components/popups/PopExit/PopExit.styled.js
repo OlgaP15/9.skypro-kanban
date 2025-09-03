@@ -30,13 +30,14 @@ export const PopExitContainer = styled.div`
 export const PopExitBlock = styled.div`
   display: block;
   margin: 0 auto;
-  background-color: #ffffff;
+  background-color: ${({ theme }) => theme.modalBg};
   max-width: 370px;
   width: 100%;
   padding: 50px 60px;
   border-radius: 10px;
-  border: 0.7px solid #d4dbe5;
+  border: 0.7px solid ${({ theme }) => theme.border};
   box-shadow: 0px 4px 67px -12px rgba(0, 0, 0, 0.13);
+  transition: background-color 0.3s, border-color 0.3s;
 
   @media only screen and (max-width: 375px) {
     padding: 50px 20px;
@@ -51,6 +52,8 @@ export const PopExitTitle = styled.div`
     line-height: 30px;
     letter-spacing: -0.4px;
     margin-bottom: 20px;
+    color: ${({ theme }) => theme.text};
+    transition: color 0.3s;
   }
 `;
 
@@ -70,7 +73,7 @@ export const PopExitFormGroup = styled.div`
 export const PopExitYesButton = styled.button`
   width: 153px;
   height: 30px;
-  background-color: #565eef;
+  background-color: ${({ theme }) => theme.accent};
   border-radius: 4px;
   border: none;
   outline: none;
@@ -84,9 +87,10 @@ export const PopExitYesButton = styled.button`
   color: #ffffff;
   margin-right: 10px;
   cursor: pointer;
+  transition: background-color 0.3s;
 
   &:hover {
-    background-color: #33399b;
+    background-color: ${({ theme }) => theme.accentHover};
   }
 
   @media only screen and (max-width: 375px) {
@@ -100,9 +104,9 @@ export const PopExitYesButton = styled.button`
 export const PopExitNoButton = styled.button`
   width: 153px;
   height: 30px;
-  background-color: #565eef;
+  background-color: ${({ theme }) => theme.background};
   border-radius: 4px;
-  border: 0.7px solid var(--palette-navy-60, #565eef);
+  border: 0.7px solid ${({ theme }) => theme.accent};
   outline: none;
   display: flex;
   align-items: center;
@@ -111,14 +115,12 @@ export const PopExitNoButton = styled.button`
   line-height: 21px;
   font-weight: 500;
   letter-spacing: -0.14px;
-  color: #ffffff;
+  color: ${({ theme }) => theme.text};
   cursor: pointer;
+  transition: background-color 0.3s, border-color 0.3s, color 0.3s;
 
   &:hover {
-    background-color: #33399b;
-    color: #ffffff;
-  }
-  &:hover a {
+    background-color: ${({ theme }) => theme.accent};
     color: #ffffff;
   }
 

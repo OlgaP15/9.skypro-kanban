@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import Calendar from "../../Calendar/Calendar.jsx";
 import {
@@ -22,37 +22,56 @@ import {
 import { statusList } from "../../../data.js";
 import { useTasks } from "../../../contexts/TaskContext";
 
-//function normalizeDateOut(date) {
-//  if (!date) return "";
-
-//  if (typeof date === "string" && date.includes(".")) return date;
-//  const d = new Date(date);
-//  if (isNaN(d)) return date;
-//  return d.toLocaleDateString("ru-RU");
-//}
+const formatDateForServer = (dateString) => {
+  if (!dateString) return "";
+  
+  if (typeof dateString === 'string' && dateString.includes('.')) {
+    return dateString;
+  }
+  
+  try {
+    const date = new Date(dateString);
+    if (isNaN(date)) return "";
+    
+    const day = String(date.getDate()).padStart(2, '0');
+    const month = String(date.getMonth() + 1).padStart(2, '0');
+    const year = date.getFullYear();
+    
+    return `${day}.${month}.${year}`;
+  } catch (error) {
+    console.error("Ошибка форматирования даты:", error);
+    return "";
+  }
+};
 
 function PopBrowse({ task, onClose }) {
   const navigate = useNavigate();
-  const { updateTask, deleteTask } = useTasks();
+  const { updateTask, deleteTask, operationLoading } = useTasks();
 
   const [isEditMode, setIsEditMode] = useState(false);
   const [editedStatus, setEditedStatus] = useState(task?.status || "БЕЗ СТАТУСА");
-  const [editedText, setEditedText] = useState(task?.description || "");
-  const [editDate, setEditDate] = useState(task?.date || "");
-  const [isLoading, setIsLoading] = useState(false);
+  const [editedDescription, setEditedDescription] = useState(task?.description || "");
+  const [editedDate, setEditedDate] = useState(task?.date || "");
 
-  if (!task) return null;
+  useEffect(() => {
+    if (task) {
+      setEditedStatus(task.status || "БЕЗ СТАТУСА");
+      setEditedDescription(task.description || "");
+      setEditedDate(task.date || "");
+    }
+  }, [task]);
+
+  if (!task) {
+    onClose && onClose();
+    return null;
+  }
 
   const getThemeClass = (topic) => {
     switch (topic) {
-      case "Web Design":
-        return "webDesign";
-      case "Research":
-        return "research";
-      case "Copywriting":
-        return "copywriting";
-      default:
-        return "gray";
+      case "Web Design": return "webDesign";
+      case "Research": return "research";
+      case "Copywriting": return "copywriting";
+      default: return "gray";
     }
   };
 
@@ -60,67 +79,62 @@ function PopBrowse({ task, onClose }) {
 
   const handleCancel = () => {
     setEditedStatus(task.status || "БЕЗ СТАТУСА");
-    setEditedText(task.description || "");
-    setEditDate(task.date || "");
+    setEditedDescription(task.description || "");
+    setEditedDate(task.date || "");
     setIsEditMode(false);
   };
 
-  function normalizeDateOut(date) {
-  if (!date) return "";
-  if (typeof date === "string" && date.includes(".")) return date;
-  const d = new Date(date);
-  if (isNaN(d)) return date;
-  return d.toLocaleDateString("ru-RU");
-}
-
   const handleSave = async () => {
-    setIsLoading(true);
+    if (!editedDescription.trim()) {
+      alert("Введите описание задачи");
+      return;
+    }
+
     try {
       const serverId = task._id || task.id;
       if (!serverId) {
-        alert("Не найден ID задачи для обновления");
-        return;
+        throw new Error("Не найден ID задачи");
       }
 
       const updatedTask = {
         title: task.title,
-        description: editedText,
-        status: editedStatus, 
-        date: normalizeDateOut(editDate || task.date),
+        description: editedDescription.trim(),
+        status: editedStatus,
+        date: formatDateForServer(editedDate),
         topic: task.topic,
       };
 
       await updateTask(serverId, updatedTask);
-      onClose && onClose();
+      alert("Задача успешно обновлена!");
+      setIsEditMode(false);
     } catch (error) {
-      alert("Не удалось обновить задачу: " + (error?.message || "Неизвестная ошибка"));
-    } finally {
-      setIsLoading(false);
+      alert("Не удалось обновить задачу: " + error.message);
     }
   };
 
   const handleDelete = async () => {
     if (!window.confirm("Вы уверены, что хотите удалить эту задачу?")) return;
-    setIsLoading(true);
+
     try {
       const serverId = task._id || task.id;
       if (!serverId) {
-        alert("Не найден ID задачи для удаления");
-        return;
+        throw new Error("Не найден ID задачи");
       }
+      
       await deleteTask(serverId);
-      onClose && onClose();
+      alert("Задача удалена!");
+      navigate("/");
     } catch (error) {
-      alert("Не удалось удалить задачу: " + (error?.message || "Неизвестная ошибка"));
-    } finally {
-      setIsLoading(false);
+      alert("Не удалось удалить задачу: " + error.message);
     }
   };
 
-  const handleClose = () => navigate(-1);
+  const handleClose = () => {
+    navigate("/");
+  };
 
   return (
-    <PopBrowseStyled onClick={onClose} id="popBrowse">
+    <PopBrowseStyled onClick={handleClose} id="popBrowse">
       <PopBrowseContainer>
         <PopBrowseBlock onClick={(e) => e.stopPropagation()}>
           <PopBrowseContent>
@@ -174,12 +188,16 @@ function PopBrowse({ task, onClose }) {
                     id="textArea01"
                     readOnly={!isEditMode}
                     placeholder="Введите описание задачи..."
-                    value={editedText}
-                    onChange={(e) => setEditedText(e.target.value)}
+                    value={editedDescription}
+                    onChange={(e) => setEditedDescription(e.target.value)}
                   />
                 </FormBrowseBlock>
               </PopBrowseForm>
-              <Calendar value={editDate} onChange={setEditDate} isDisabled={!isEditMode} />
+              <Calendar 
+                value={editedDate} 
+                onChange={setEditedDate} 
+                isDisabled={!isEditMode} 
+              />
             </PopBrowseWrap>
 
             {!isEditMode ? (
@@ -188,22 +206,22 @@ function PopBrowse({ task, onClose }) {
                   <button
                     className="btn-browse__edit _btn-bor _hover03"
                     onClick={() => setIsEditMode(true)}
-                    disabled={isLoading}
+                    disabled={operationLoading}
                   >
                     Редактировать задачу
                   </button>
                   <button
                     className="btn-browse__delete _btn-bor _hover03"
                     onClick={handleDelete}
-                    disabled={isLoading}
+                    disabled={operationLoading}
                   >
                     Удалить задачу
                   </button>
                 </div>
                 <button
                   className="btn-edit__edit _btn-bg _hover01"
-                  onClick={onClose}
-                  disabled={isLoading}
+                  onClick={handleClose} 
+                  disabled={operationLoading}
                 >
                   Закрыть
                 </button>
@@ -214,14 +232,14 @@ function PopBrowse({ task, onClose }) {
                   <button
                     className="btn-edit__edit _btn-bg _hover01"
                     onClick={handleSave}
-                    disabled={isLoading}
+                    disabled={operationLoading}
                   >
-                    {isLoading ? "Сохранение..." : "Сохранить"}
+                    {operationLoading ? "Сохранение..." : "Сохранить"}
                   </button>
                   <button
                     className="btn-edit__edit _btn-bor _hover03"
                     onClick={handleCancel}
-                    disabled={isLoading}
+                    disabled={operationLoading}
                   >
                     Отменить
                   </button>
@@ -229,15 +247,15 @@ function PopBrowse({ task, onClose }) {
                     className="btn-edit__delete _btn-bor _hover03"
                     id="btnDelete"
                     onClick={handleDelete}
-                    disabled={isLoading}
+                    disabled={operationLoading}
                   >
                     Удалить задачу
                   </button>
                 </div>
                 <button
-                  onClick={handleClose}
+                  onClick={handleClose} 
                   className="btn-edit__close _btn-bg _hover01"
-                  disabled={isLoading}
+                  disabled={operationLoading}
                 >
                   Закрыть
                 </button>

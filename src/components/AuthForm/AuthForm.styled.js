@@ -16,7 +16,7 @@ export const AuthModal = styled.div`
   min-height: ${({ $isSignUp }) => ($isSignUp ? "345px" : "329px")};
   height: auto;
   padding: 50px 60px 50px 60px;
-  background-color: #ffffff;
+  background-color: ${({ theme }) => theme.modalBg};
   border-radius: 10px;
   position: relative;
   box-shadow: 0px 4px 40px -10px rgba(0, 0, 0, 0.1);
@@ -35,7 +35,7 @@ export const AuthWrapper = styled.div`
 `;
 
 export const AuthTitle = styled.h2`
-  color: #000000;
+  color: ${({ theme }) => theme.text};
   font-family: Roboto;
   font-weight: 700;
   font-size: 20px;
@@ -66,7 +66,7 @@ export const AuthInput = styled.input`
   height: 30px;
   border-radius: 8px;
   border: 0.7px solid
-    ${({ $error }) => ($error ? "red" : "rgba(148, 166, 190, 0.4)")};
+    ${({ $error, theme }) => ($error ? "red" : theme.border)};
   outline: none;
   padding: 4.5px 10px;
   font-family: Roboto;
@@ -74,16 +74,18 @@ export const AuthInput = styled.input`
   font-size: 14px;
   line-height: 150%;
   letter-spacing: -0.02em;
+  background: ${({ theme }) => theme.inputBg};
+  color: ${({ theme }) => theme.text};
 
   &::placeholder {
-    color: #94a6be;
+    color: ${({ theme }) => theme.placeholder};
   }
 `;
 
 export const ButtonEnter = styled.button`
   width: 248px;
   height: 30px;
-  background-color: #565eef;
+  background-color: ${({ theme }) => theme.accent};
   border-radius: 4px;
   color: #ffffff;
   font-size: 14px;
@@ -95,7 +97,7 @@ export const ButtonEnter = styled.button`
   transition: all 0.3s ease-in-out;
 
   &:hover {
-    background-color: #33399b;
+    background-color: ${({ theme }) => theme.accentHover};
   }
 `;
 
@@ -108,7 +110,7 @@ export const FormGroup = styled.div`
   gap: ${({ $isSignUp }) => ($isSignUp ? "5px" : "0px")};
 
   p {
-    color: #94a6be66;
+    color: ${({ theme }) => theme.mutedText};
     line-height: 21px;
     letter-spacing: -0.14px;
     font-family: Roboto;
@@ -117,7 +119,7 @@ export const FormGroup = styled.div`
   }
 
   a {
-    color: #94a6be66;
+    color: ${({ theme }) => theme.mutedText};
     line-height: 21px;
     letter-spacing: -0.14px;
     text-decoration: underline;
@@ -127,10 +129,11 @@ export const FormGroup = styled.div`
     font-size: 14px;
 
     &:hover {
-      color: #565eef;
+      color: ${({ theme }) => theme.accent};
     }
   }
 `;
+
 export const ErrorText = styled.p`
   color: #f84d4d;
   font-size: 12px;

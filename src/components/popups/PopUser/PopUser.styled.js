@@ -8,20 +8,16 @@ export const PopUserContainer = styled.div`
   width: 213px;
   height: 205px;
   border-radius: 10px;
-  border: 0.7px solid rgba(148, 166, 190, 0.4);
-  background: #fff;
+  border: 0.7px solid ${({ theme }) => theme.border};
+  background: ${({ theme }) => theme.modalBg};
   box-shadow: 0px 10px 39px 0px rgba(26, 56, 101, 0.21);
   padding: 34px;
   text-align: center;
   z-index: 100;
-
-  &.target {
-    display: block;
-  }
 `;
 
 export const PopUserName = styled.p`
-  color: #000;
+  color: ${({ theme }) => theme.text};
   font-size: 14px;
   font-weight: 500;
   line-height: 21px;
@@ -30,7 +26,7 @@ export const PopUserName = styled.p`
 `;
 
 export const PopUserMail = styled.p`
-  color: #94a6be;
+  color: ${({ theme }) => theme.textSecondary};
   font-size: 14px;
   line-height: 21px;
   letter-spacing: -0.14px;
@@ -44,7 +40,7 @@ export const PopUserTheme = styled.div`
   margin-bottom: 30px;
 
   & p {
-    color: #000;
+    color: ${({ theme }) => theme.text};
     font-size: 14px;
     line-height: 21px;
     letter-spacing: -0.14px;
@@ -55,7 +51,7 @@ export const PopUserTheme = styled.div`
     width: 24px;
     height: 13px;
     border-radius: 100px;
-    background: #eaeef6;
+    background: ${({ theme }) => theme.inputBg};
     outline: none;
     -webkit-appearance: none;
     -moz-appearance: none;
@@ -70,7 +66,7 @@ export const PopUserTheme = styled.div`
     width: 11px;
     height: 11px;
     border-radius: 50%;
-    background-color: #94a6be;
+    background-color: ${({ theme }) => theme.accent};
     transition: 0.5s;
   }
 
@@ -83,16 +79,17 @@ export const PopUserButton = styled.button`
   width: 72px;
   height: 30px;
   background: transparent;
-  color: #565eef;
+  color: ${({ theme }) => theme.accent};
   border-radius: 4px;
-  border: 1px solid #565eef;
+  border: 1px solid ${({ theme }) => theme.accent};
+  cursor: pointer;
 
   & a {
-    color: #565eef;
+    color: ${({ theme }) => theme.accent};
   }
 
   &:hover {
-    background-color: #33399b;
+    background-color: ${({ theme }) => theme.accentHover};
     color: #ffffff;
   }
   &:hover a {

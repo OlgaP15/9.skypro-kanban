@@ -1,4 +1,4 @@
-import React, { useRef, useState } from "react";
+import React, { useRef, useState, useContext } from "react";
 import {
   PopUserContainer,
   PopUserName,
@@ -7,10 +7,14 @@ import {
   PopUserButton,
 } from "../PopUser/PopUser.styled";
 import PopExit from "../PopExit/PopExit";
+import { ThemeContext } from "../../../contexts/ThemeContext";
+
 
 function PopUser({ $isVisible, onClose }) {
   const [isExitOpen, setIsExitOpen] = useState(false);
   const ref = useRef();
+
+  const { theme, toggleTheme } = useContext(ThemeContext);
 
   const userInfo = JSON.parse(localStorage.getItem("userInfo") || "{}");
   const userName = userInfo?.name || "Пользователь";
@@ -25,7 +29,13 @@ function PopUser({ $isVisible, onClose }) {
         <PopUserMail>{userLogin}</PopUserMail>
         <PopUserTheme>
           <p>Темная тема</p>
-          <input type="checkbox" className="checkbox" name="checkbox" />
+          <input
+            type="checkbox"
+            className="checkbox"
+            name="checkbox"
+            checked={theme === "dark"}
+            onChange={toggleTheme}
+          />
         </PopUserTheme>
         <PopUserButton type="button" onClick={() => setIsExitOpen(true)}>
           Выйти
@@ -42,4 +52,5 @@ function PopUser({ $isVisible, onClose }) {
     </>
   );
 }
+
 export default PopUser;

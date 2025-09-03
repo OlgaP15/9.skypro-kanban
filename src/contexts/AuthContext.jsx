@@ -4,7 +4,6 @@ import { signIn as apiSignIn, signUp as apiSignUp } from "../services/api";
 const AuthContext = createContext(null);
 
 export function AuthProvider({ children }) {
-  // лениво читаем localStorage один раз на первый рендер
   const [token, setToken] = useState(() => localStorage.getItem("token"));
   const [user, setUser] = useState(() => {
     const u = localStorage.getItem("userInfo");
@@ -28,6 +27,9 @@ export function AuthProvider({ children }) {
       localStorage.setItem("token", t);
       localStorage.setItem("userInfo", JSON.stringify(u));
       return u;
+    } catch (error) {
+      console.error("Ошибка входа:", error);
+      throw error; 
     } finally {
       setIsAuthLoading(false);
     }
@@ -45,6 +47,9 @@ export function AuthProvider({ children }) {
       localStorage.setItem("token", t);
       localStorage.setItem("userInfo", JSON.stringify(u));
       return u;
+    } catch (error) {
+      console.error("Ошибка регистрации:", error);
+      throw error;
     } finally {
       setIsAuthLoading(false);
     }

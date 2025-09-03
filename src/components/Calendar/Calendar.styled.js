@@ -8,7 +8,7 @@ export const CalendarContainer = styled.div`
 export const CalendarTitle = styled.p`
   margin-bottom: 14px;
   padding: 0 7px;
-  color: #000;
+  color: ${({ theme }) => theme.text};
   font-size: 14px;
   font-weight: 600;
   line-height: 1;
@@ -19,7 +19,7 @@ export const CalendarBlock = styled.div`
 `;
 
 export const CalendarMonth = styled.div`
-  color: #94a6be;
+  color: ${({ theme }) => theme.mutedText};
   font-size: 14px;
   line-height: 25px;
   font-weight: 600;
@@ -39,14 +39,14 @@ export const CalendarDaysNames = styled.div`
 `;
 
 export const CalendarDayName = styled.div`
-  color: #94a6be;
+  color: ${({ theme }) => theme.mutedText};
   font-size: 10px;
   font-weight: 500;
   line-height: normal;
   letter-spacing: -0.2px;
-  
+
   &.weekend {
-    color: #94A6BE;
+    color: ${({ theme }) => theme.mutedText};
   }
 `;
 
@@ -66,7 +66,7 @@ export const CalendarCell = styled.div`
   flex-wrap: nowrap;
   align-items: center;
   justify-content: center;
-  color: #94a6be;
+  color: ${({ theme }) => theme.mutedText};
   font-size: 10px;
   line-height: 1;
   letter-spacing: -0.2px;
@@ -77,28 +77,28 @@ export const CalendarCell = styled.div`
   }
 
   &.weekend {
-    color: #94A6BE;
+    color: ${({ theme }) => theme.mutedText};
   }
 
   &.current {
     font-weight: 700;
-    color: #000;
+    color: ${({ theme }) => theme.text};
   }
 
   &.active-day {
-    background-color: #565EEF;
+    background-color: ${({ theme }) => theme.accent};
     color: #ffffff;
     font-weight: 500;
   }
 
   &:hover:not(.active-day):not(.other-month) {
-    background-color: #EAEEF6;
-    color: #000;
+    background-color: ${({ theme }) => theme.hoverBg};
+    color: ${({ theme }) => theme.text};
   }
 
   &.hovered:not(.active-day):not(.other-month) {
-    background-color: #F0F2F5;
-    color: #000;
+    background-color: ${({ theme }) => theme.hoverBg2};
+    color: ${({ theme }) => theme.text};
   }
 `;
 
@@ -120,19 +120,19 @@ export const NavActions = styled.div`
 export const NavAction = styled.div`
   width: 18px;
   height: 25px;
-  cursor: ${props => props.disabled ? 'not-allowed' : 'pointer'};
+  cursor: ${(props) => (props.disabled ? "not-allowed" : "pointer")};
   display: flex;
   align-items: center;
   justify-content: center;
-  opacity: ${props => props.disabled ? 0.5 : 1};
+  opacity: ${(props) => (props.disabled ? 0.5 : 1)};
 
   &:hover:not([disabled]) {
-    background-color: #EAEEF6;
+    background-color: ${({ theme }) => theme.hoverBg};
     border-radius: 4px;
   }
 
   svg {
-    fill: #94a6be;
+    fill: ${({ theme }) => theme.mutedText};
   }
 `;
 
@@ -141,14 +141,14 @@ export const CalendarPeriod = styled.div`
 `;
 
 export const CalendarText = styled.p`
-  color: #94a6be;
+  color: ${({ theme }) => theme.mutedText};
   font-size: 10px;
   line-height: 1;
 
   span {
-    color: #000000;
+    color: ${({ theme }) => theme.text};
   }
-  
+
   &.date-end {
     font-weight: 500;
   }

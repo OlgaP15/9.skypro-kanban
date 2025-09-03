@@ -1,7 +1,7 @@
 import React from "react";
 import Column from "../Column/Column";
 import { statusList } from "../../data.js";
-import { MainBlock, MainContent, LoadingText } from "./Main.styled";
+import { MainBlock, MainContent, LoadingText, EmptyTasksText } from "./Main.styled";
 import { useTasks } from "../../contexts/TaskContext";
 
 function Main() {
@@ -26,10 +26,14 @@ function Main() {
           {tasksLoading ? (
             <LoadingText>Данные загружаются...</LoadingText>
           ) : (
-            statusList.map((status) => {
-              const filteredTasks = tasks.filter((task) => task.status === status);
-              return <Column key={status} title={status} cards={filteredTasks} />;
-            })
+            tasks.length === 0 ? (
+              <EmptyTasksText>Новых задач нет</EmptyTasksText>
+            ) : (
+              statusList.map((status) => {
+                const filteredTasks = tasks.filter((task) => task.status === status);
+                return <Column key={status} title={status} cards={filteredTasks} />;
+              })
+            )
           )}
         </MainContent>
       </div>
